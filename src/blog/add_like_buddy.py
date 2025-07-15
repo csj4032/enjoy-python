@@ -68,8 +68,8 @@ def like_post(posts_, buddy_, limit=10):
 
 if __name__ == '__main__':
     configuration = Configuration()
-    driver = utils.setup_firefox_profile_driver(configuration)
-    driver.set_window_position(0, 0)
+    driver = utils.setup_edge_profile_driver(configuration)
+    driver.set_window_position(-500, 0)
     try:
         driver.get(configuration.naver_blog_mobile_buddy_list_url)
         you_add_to_click = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-click-area='ngr.youadd']")))

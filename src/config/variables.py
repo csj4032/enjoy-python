@@ -13,6 +13,7 @@ class Variables:
         self.gemini_model = None
         self.iphone_user_agent = None
         self.naver_mobile_url = None
+        self.naver_blog_mobile_url = None
         self.naver_blog_mobile_buddy_list_url = None
         self.naver_blog_mobile_recommendation_url = None
         self.naver_blog_mobile_feed_list_url = None
@@ -28,6 +29,7 @@ class Variables:
         self.gemini_api_key = os.getenv('GEMINI_API_KEY')
         self.gemini_model = os.getenv('GEMINI_MODEL')
         self.naver_mobile_url = os.getenv('NAVER_MOBILE_URL')
+        self.naver_blog_mobile_url = os.getenv('NAVER_BLOG_MOBILE_URL')
         self.naver_blog_mobile_buddy_list_url = os.getenv('NAVER_BLOG_MOBILE_BUDDY_LIST_URL')
         self.naver_blog_mobile_recommendation_url = os.getenv('NAVER_BLOG_MOBILE_RECOMMENDATION_URL')
         self.naver_blog_mobile_feed_list_url = os.getenv('NAVER_BLOG_MOBILE_FEED_LIST_URL')

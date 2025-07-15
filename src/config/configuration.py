@@ -11,6 +11,7 @@ class Configuration:
         self.gemini_api_key = self.variables.gemini_api_key
         self.gemini_model = self.variables.gemini_model
         self.naver_mobile_url = self.variables.naver_mobile_url
+        self.naver_blog_mobile_url = self.variables.naver_blog_mobile_url
         self.naver_blog_mobile_buddy_list_url = self.variables.naver_blog_mobile_buddy_list_url
         self.naver_blog_mobile_recommendation_url = self.variables.naver_blog_mobile_recommendation_url
         self.naver_blog_mobile_feed_list_url = self.variables.naver_blog_mobile_feed_list_url
