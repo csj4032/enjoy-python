@@ -9,21 +9,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from blog import utils
+from blog.utils import window_scroll_more
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
-
-
-def window_scroll_more(driver_, range_, x_coord, y_coord):
-    for index in range(range_):
-        driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
-        try:
-            more_button = WebDriverWait(driver_, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.button_show__VRCFg")))
-            more_button.click()
-            time.sleep(random.uniform(0, 1))
-        except TimeoutException:
-            logging.info("No more button found, continuing to scroll.")
-            pass
 
 
 def window_scroll(driver_, range_, x_coord, y_coord):
@@ -104,7 +93,7 @@ if __name__ == '__main__':
         recommend_link = WebDriverWait(driver, 2).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a[data-click-area='lnb.rec']")))
         recommend_link.click()
 
-        window_scroll_more(driver, 30, 0, 500)
+        window_scroll_more(driver, 30, 0, 500, "button.button_show__VRCFg")
         logging.info("Scrolled down to load more posts.")
         post_list = driver.find_elements(By.CLASS_NAME, "postlist__qxOgF")
         top_post = max((post for post in (parse_post(p) for p in post_list) if post), key=lambda post: post['likes'], default=None)

@@ -11,7 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from blog import utils
 from config.configuration import Configuration
 
-logging.basicConfig(level=logging.WARNING, )
+logging.basicConfig(level=logging.INFO)
 
 
 def parse_buddy(buddy_):
