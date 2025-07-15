@@ -43,7 +43,6 @@ class Variables:
         self.naver_blog_buddy_request_pending_cancel_message = None
         self.naver_blog_buddy_user_limit_reached_message = None
 
-    def configure(self) -> None:
         current_directory = os.path.dirname(os.path.abspath(__file__))
         logging.info(f"current_directory: {current_directory}")
         load_dotenv(dotenv_path=f"{current_directory}/envs/.env")

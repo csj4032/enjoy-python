@@ -17,6 +17,7 @@ def generate_fake_data() -> list[dict[str, str]]:
         "sentence": faker.sentence()
     }) for _ in range(1)]
 
+
 if __name__ == '__main__':
     fake_data = generate_fake_data()
     fake_data_json = json.dumps(fake_data, ensure_ascii=False)

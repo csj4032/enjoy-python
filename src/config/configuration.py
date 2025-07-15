@@ -7,6 +7,8 @@ class Configuration:
         self.variables = Variables(environment)
         self.variables.configure()
         self.environment = self.variables.environment
+        self.firefox_profile_path = self.variables.firefox_profile_path
+        self.edge_profile_path = self.variables.edge_profile_path
         self.gemini_api_key = self.variables.gemini_api_key
         self.gemini_model = self.variables.gemini_model
         self.ollama_api_url = self.variables.ollama_api_url
