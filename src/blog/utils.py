@@ -18,6 +18,15 @@ from selenium.webdriver.support.ui import WebDriverWait
 from config.configuration import Configuration
 
 
+def setup_firefox_driver():
+    options = FirefoxOptions()
+    options.add_argument("--headless")
+    options.add_argument("--window-size=480,1480")
+    options.set_preference("general.useragent.override", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1")
+    service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")
+    return webdriver.Firefox(service=service, options=options)
+
+
 def setup_firefox_profile_driver(configuration: Configuration):
     options = FirefoxOptions()
     options.add_argument("--headless")
@@ -54,6 +63,18 @@ def window_scroll_more(driver_, range_, x_coord, y_coord, selector="button.butto
             more_button.click()
             logging.info(f"Clicked more button {index + 1}/{range_} times. link : {link}")
             time.sleep(random.uniform(scroll_random_start_time, scroll_random_end_time))
+        except TimeoutException:
+            pass
+
+
+def window_scroll_top(driver_, range_, x_coord, y_coord, selector="button.button_show__VRCFg", link=""):
+    for index in range(range_):
+        logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
+        driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
+        try:
+            top_button = WebDriverWait(driver_, 0.5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            if top_button is not None:
+                break
         except TimeoutException:
             pass
 
