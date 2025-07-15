@@ -83,17 +83,17 @@ def get_buddy_subject(driver_):
 
 if __name__ == '__main__':
     configuration = Configuration()
-    driver = utils.setup_firefox_profile_driver(configuration)
-    driver.set_window_position(0, 0)
+    driver = utils.setup_edge_profile_driver(configuration)
+    driver.set_window_position(-1000, 0)
     try:
-        driver.get("https://m.blog.naver.com")
+        driver.get(configuration.naver_blog_mobile_url)
         logging.info(f"Page title is: {driver.title}")
 
         time.sleep(random.uniform(0, 1))
         recommend_link = WebDriverWait(driver, 2).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a[data-click-area='lnb.rec']")))
         recommend_link.click()
 
-        window_scroll_more(driver, 30, 0, 500, "button.button_show__VRCFg")
+        window_scroll_more(driver, 30, 0, 500, "button.button_show__VRCFg", link=configuration.naver_blog_mobile_url)
         logging.info("Scrolled down to load more posts.")
         post_list = driver.find_elements(By.CLASS_NAME, "postlist__qxOgF")
         top_post = max((post for post in (parse_post(p) for p in post_list) if post), key=lambda post: post['likes'], default=None)

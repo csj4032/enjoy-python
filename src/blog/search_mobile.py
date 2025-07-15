@@ -12,6 +12,7 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from blog import utils
+from blog.utils import setup_firefox_driver
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
@@ -54,14 +55,6 @@ posts = [
     {"keywords": ["Python 왈러스 연산자", "Python 왈러스", "Python 연산자"], "link": "https://m.blog.naver.com/csj4032/223930544260"},
 ]
 
-
-def setup_driver():
-    options = FirefoxOptions()
-    options.add_argument("--headless")
-    service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")
-    return webdriver.Firefox(service=service, options=options)
-
-
 def get_search(driver_, link_, keyword_, selector_, match_element="", timeout_=10):
     logging.info(f"Searching for '{keyword_}' in  {selector_},[{match_element}] with link: {link_}")
     try:
@@ -82,7 +75,7 @@ if __name__ == '__main__':
     for post in shuffle_posts:
         keyword = random.choice(post["keywords"])
         link = post['link']
-        driver = setup_driver()
+        driver = setup_firefox_driver(configuration)
         try:
             driver.set_window_size(1280, 1800)
             driver.set_window_position(-1280, 0)

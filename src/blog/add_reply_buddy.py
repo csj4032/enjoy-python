@@ -47,7 +47,7 @@ if __name__ == '__main__':
         driver.get(configuration.naver_blog_mobile_feed_list_url)
         driver.set_window_position(-500, 0)
         time.sleep(random.uniform(1, 2))
-        utils.window_scroll(driver, 200, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
+        utils.window_scroll(driver, 100, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
         posts = get_posts(driver)
         posts_count = len(posts)
         for index, post in enumerate(posts):
@@ -57,6 +57,7 @@ if __name__ == '__main__':
                 time.sleep(random.uniform(1, 2))
                 content = utils.get_content(driver)
                 reply_button = utils.get_reply_button(driver)
+                logging.info(f"Post: {post['name']}, Link: {post['link']}, Content length: {len(content)}, Reply button: {reply_button is not None}")
                 if content and len(content) > 1000 and reply_button:
                     driver.execute_script("arguments[0].click();", reply_button)
                     time.sleep(random.uniform(1, 2))

@@ -18,18 +18,16 @@ from selenium.webdriver.support.ui import WebDriverWait
 from config.configuration import Configuration
 
 
-def setup_firefox_driver():
+def setup_firefox_driver(configuration: Configuration):
     options = FirefoxOptions()
-    options.add_argument("--headless")
     options.add_argument("--window-size=480,1480")
-    options.set_preference("general.useragent.override", "Mozilla/5.0 (iPhone; CPU iPhone OS 16_6 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Mobile/15E148 Safari/604.1")
+    options.set_preference("general.useragent.override", configuration.iphone_user_agent)
     service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")
     return webdriver.Firefox(service=service, options=options)
 
 
 def setup_firefox_profile_driver(configuration: Configuration):
     options = FirefoxOptions()
-    options.add_argument("--headless")
     options.add_argument("-profile")
     options.add_argument(configuration.firefox_profile_path)
     options.add_argument(f"--window-size=480,1480")
