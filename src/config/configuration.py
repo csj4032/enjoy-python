@@ -26,17 +26,23 @@ class Configuration:
         self.browser_configuration.headless = headless
         return self
 
-    def get_browser_headless(self):
+    def get_browser_headless(self) -> bool:
         return self.browser_configuration.headless
 
     def get_browser_firefox_profile_path(self):
         return self.browser_configuration.firefox_profile_path
+
+    def get_browser_firefox_window_size(self):
+        return self.browser_configuration.firefox_window_size
 
     def get_browser_edge_profile_path(self):
         return self.browser_configuration.edge_profile_path
 
     def get_browser_edge_profile(self):
         return self.browser_configuration.edge_profile
+
+    def get_browser_edge_window_size(self):
+        return self.browser_configuration.edge_window_size
 
     def get_browser_iphone_user_agent(self):
         return self.browser_configuration.iphone_user_agent
@@ -53,8 +59,10 @@ class BrowserConfiguration:
         self.variables = variables
         self.headless = True
         self.firefox_profile_path = self.variables.firefox_profile_path
+        self.firefox_window_size = self.variables.firefox_window_size
         self.edge_profile_path = self.variables.edge_profile_path
         self.edge_profile = self.variables.edge_profile
+        self.edge_window_size = self.edge_window_size
         self.iphone_user_agent = self.variables.iphone_user_agent
         self.geckodriver_path = self.variables.geckodriver_path
         self.msedgedriver_path = self.variables.msedgedriver_path

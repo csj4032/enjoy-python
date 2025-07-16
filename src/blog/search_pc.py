@@ -58,7 +58,9 @@ posts = [
     {"keywords": ["Slack 리마인더", "Slack 리마인더 설정", "Slack 설정"], "link": "https://blog.naver.com/csj4032/223926096620"},
     {"keywords": ["Python List Comprehension", "Python Comprehension", "Python List"], "link": "https://blog.naver.com/csj4032/223927935180"},
     {"keywords": ["팔란티어(Palantir) RFx 블로그 시리즈", "팔란티어(Palantir) RFx", "팔란티어 블로그"], "link": "https://m.blog.naver.com/csj4032/223929117712"},
-    {"keywords": ["Python 왈러스 연산자", "Python 왈러스", "Python 연산자"], "link": "https://m.blog.naver.com/csj4032/223930544260"},
+    {"keywords": ["파이썬 왈러스 연산자", "파이썬 왈러스", "파이썬 연산자", "Python 왈러스"], "link": "https://blog.naver.com/csj4032/223930544260"},
+    {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://blog.naver.com/csj4032/223934421842"},
+    {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://blog.naver.com/csj4032/223935057219"},
 ]
 
 
