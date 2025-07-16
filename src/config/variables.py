@@ -8,8 +8,10 @@ class Variables:
     def __init__(self, environment: str = None):
         self.environment = environment
         self.firefox_profile_path = None
+        self.firefox_window_size = None
         self.edge_profile_path = None
         self.edge_profile = None
+        self.edge_window_size = None
         self.gemini_api_key = None
         self.gemini_model = None
         self.iphone_user_agent = None
@@ -30,7 +32,9 @@ class Variables:
         self.environment = "local"
         self.edge_profile_path = os.getenv('EDGE_PROFILE_PATH')
         self.edge_profile = os.getenv('EDGE_PROFILE')
+        self.edge_window_size = os.getenv('EDGE_WINDOW_SIZE', '480,1800')
         self.firefox_profile_path = os.getenv('FIREFOX_PROFILE_PATH')
+        self.firefox_window_size = os.getenv('FIREFOX_WINDOW_SIZE', '480,1800')
         self.iphone_user_agent = os.getenv('IPHONE_USER_AGENT')
         self.gemini_api_key = os.getenv('GEMINI_API_KEY')
         self.gemini_model = os.getenv('GEMINI_MODEL')

@@ -84,7 +84,7 @@ def get_buddy_subject(driver_):
 if __name__ == '__main__':
     configuration = Configuration()
     driver = utils.setup_edge_profile_driver(configuration)
-    driver.set_window_position(-1000, 0)
+    driver.set_window_position(-500, 0)
     try:
         driver.get(configuration.naver_blog_mobile_url)
         logging.info(f"Page title is: {driver.title}")
@@ -112,7 +112,7 @@ if __name__ == '__main__':
         logging.info(f"Found {len(buddies)} buddies.")
 
         for buddy in buddies:
-            logging.info(f"Processing buddy: {buddy['nick_name']}")
+            logging.info(f"Processing buddy: {buddy['nick_name']} link: {buddy['link']}")
             driver.get(buddy['link'])
             time.sleep(random.uniform(1, 2))
             try:
@@ -124,27 +124,27 @@ if __name__ == '__main__':
                     logging.info(f"{buddy['nick_name']} Skipping buddy due to insufficient conditions.")
                     continue
 
-                buddy_add = WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-click-area='ebc.add']")))
+                buddy_add = WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "[data-click-area='ebc.add']")))
                 driver.execute_script("arguments[0].click();", buddy_add)
                 time.sleep(random.uniform(1, 2))
                 try:
-                    description_paragraph = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl")))
-                    logging.info(f"Popup description text: {description_paragraph.text}")
+                    description_paragraph = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl")))
+                    logging.info(f"Popup description text: {description_paragraph.text.strip()}")
                     if description_paragraph.text == "하루에 신청 가능한 이웃수가 초과되어 더이상 이웃을 추가할 수 없습니다.":
                         logging.info("Daily buddy limit reached, skipping further additions.")
-                        WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
+                        WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
                         break
                     if description_paragraph.text == "그룹이 꽉참":
                         logging.info(f"{buddy['nick_name']} has too many buddies, skipping.")
-                        WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
+                        WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
                         break
                     if description_paragraph.text == "서로이웃 신청 진행중입니다. 서로이웃<br>신청을 취소하시겠습니까?":
                         logging.info(f"Already a buddy with {buddy['nick_name']}, skipping.")
-                        WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
+                        WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
                         continue
                     if description_paragraph.text == "상대방의 이웃수가 5,000명이 초과되어 더 이상 이웃을 추가할 수 없습니다.":
                         logging.info(f"{buddy['nick_name']} has too many buddies, skipping.")
-                        WebDriverWait(driver, 3).until(EC.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
+                        WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
                         continue
                 except TimeoutException:
                     logging.info(f"No alert for buddy: {buddy['nick_name']}")
@@ -171,5 +171,5 @@ if __name__ == '__main__':
         logging.error("An error occurred:", exception)
     finally:
         logging.info("Closing the driver.")
-        time.sleep(random.uniform(1, 5))
+        time.sleep(random.uniform(1000, 5000))
         driver.quit()
