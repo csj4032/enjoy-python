@@ -42,12 +42,13 @@ def get_ollama_comment(title, content_, model='exaone3.5:latest'):
 
 if __name__ == '__main__':
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     driver = utils.setup_firefox_profile_driver(configuration)
     try:
         driver.get(configuration.naver_blog_mobile_feed_list_url)
         driver.set_window_position(-500, 0)
         time.sleep(random.uniform(1, 2))
-        utils.window_scroll(driver, 100, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
+        utils.window_scroll(driver, 10, 0, 1000, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
         posts = get_posts(driver)
         posts_count = len(posts)
         for index, post in enumerate(posts):

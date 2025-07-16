@@ -61,6 +61,7 @@ posts = [
     {"keywords": ["파이썬 왈러스 연산자", "파이썬 왈러스", "파이썬 연산자", "Python 왈러스"], "link": "https://blog.naver.com/csj4032/223930544260"},
     {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://blog.naver.com/csj4032/223934421842"},
     {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://blog.naver.com/csj4032/223935057219"},
+    {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://blog.naver.com/csj4032/223936360808"},
 ]
 
 
@@ -143,7 +144,7 @@ if __name__ == '__main__':
                 driver.switch_to.frame(main_iframe)
                 time.sleep(random.uniform(1, 10))
                 logging.info(f"Successfully navigated to {keyword} post: {link}")
-                utils.window_scroll(driver, 20, 0, random.uniform(100, 500), 10, 15, link)
+                utils.window_scroll(driver, 20, 0, random.uniform(100, 500), 25, 35, link)
                 driver.switch_to.default_content()
                 logging.info(f"Time taken to process '{keyword}': {time.time() - start_time:.2f} seconds")
             else:
