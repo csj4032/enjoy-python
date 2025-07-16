@@ -32,7 +32,7 @@ def setup_driver():
 if __name__ == '__main__':
     driver = setup_driver()
     try:
-        driver.get("https://m.blog.naver.com/PostView.naver?blogId=quddkfl1356&logNo=223935133483&navType=by")
+        driver.get("https://m.blog.naver.com/PostView.naver?blogId=shin30233&logNo=223936356948&navType=by")
         category = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.blog_category"))).text.strip()
         title = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
         content = utils.get_content(driver)
