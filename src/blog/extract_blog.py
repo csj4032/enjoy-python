@@ -1,16 +1,16 @@
 import logging
 import random
 import time
+from pydoc import browse
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from blog.utils import setup_firefox_driver, window_scroll_top
+from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
-
-__blog_url = "https://m.blog.naver.com/csj4032"
 
 
 def parse_post(post_element):
@@ -33,9 +33,11 @@ def get_posts(driver_, timeout=1, selector="div.card__reUkU"):
 
 
 if __name__ == '__main__':
-    driver = setup_firefox_driver()
-    driver.get(__blog_url)
-    window_scroll_top(driver, 10, 0, 1000, selector="div.scroll_top__YuIw9", link=__blog_url)
+    configuration = Configuration()
+    configuration.set_browser_headless(False)
+    driver = setup_firefox_driver(configuration.browser_configuration)
+    driver.get(configuration.mmix_naver_blog_mobile_url)
+    window_scroll_top(driver, 10, 0, 1000, selector="div.scroll_top__YuIw9", link=configuration.mmix_naver_blog_mobile_url)
     posts = get_posts(driver)
     logging.info(f"Found {len(posts)} posts on the page.")
     for post in posts:

@@ -15,33 +15,34 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from config.configuration import Configuration
+from config.configuration import Configuration, BrowserConfiguration
 
 
 def setup_firefox_driver(configuration: Configuration):
     options = FirefoxOptions()
+    configuration.get_browser_headless() and options.add_argument("--headless")
     options.add_argument("--window-size=480,1480")
-    options.set_preference("general.useragent.override", configuration.iphone_user_agent)
-    service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")
+    options.set_preference("general.useragent.override", configuration.get_browser_iphone_user_agent())
+    service = FirefoxService(executable_path=configuration.get_browser_geckodriver_path())
     return webdriver.Firefox(service=service, options=options)
 
 
 def setup_firefox_profile_driver(configuration: Configuration):
     options = FirefoxOptions()
     options.add_argument("-profile")
-    options.add_argument(configuration.firefox_profile_path)
+    options.add_argument(configuration.get_browser_firefox_profile_path())
     options.add_argument(f"--window-size=480,1480")
     options.set_preference("general.useragent.override", configuration.iphone_user_agent)
-    service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")
+    service = FirefoxService(executable_path=configuration.get_browser_geckodriver_path())
     return webdriver.Firefox(service=service, options=options)
 
 
 def setup_edge_profile_driver(configuration: Configuration):
     options = EdgeOptions()
-    options.add_argument(f"--user-data-dir={configuration.edge_profile_path}")
-    options.add_argument(f"profile-directory=Profile 3")
+    options.add_argument(f"--user-data-dir={configuration.get_browser_edge_profile_path()}")
+    options.add_argument(f"profile-directory={configuration.get_browser_edge_profile()}")
     options.add_argument(f"--window-size=480,1480")
-    service = EdgeService(executable_path="/usr/local/bin/msedgedriver")
+    service = EdgeService(executable_path=configuration.get_browser_msedgedriver_path())
     return webdriver.Edge(service=service, options=options)
 
 

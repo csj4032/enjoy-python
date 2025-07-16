@@ -1,3 +1,4 @@
 .idea/
 .ipynbs_checkpoints/
 __pycache__/
+/src/config/envs/
