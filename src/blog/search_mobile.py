@@ -52,6 +52,8 @@ posts = [
     {"keywords": ["파이썬 왈러스 연산자", "파이썬 왈러스", "파이썬 연산자", "Python 왈러스"], "link": "https://m.blog.naver.com/csj4032/223930544260"},
     {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://m.blog.naver.com/csj4032/223934421842"},
     {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://m.blog.naver.com/csj4032/223935057219"},
+    {"keywords": ["파이썬 Coroutine 예외처리", "파이썬 Iterator", "파이썬 Iterator 예외처리"], "link": "https://m.blog.naver.com/csj4032/223936858166"},
+    {"keywords": ["파이썬 예외처리", "파이썬 예외 처리", "파이썬 예외"], "link": "https://m.blog.naver.com/csj4032/223937102638"},
 ]
 
 
@@ -97,7 +99,7 @@ if __name__ == '__main__':
             if matched_element is not None:
                 start_time = time.time()
                 matched_element.click()
-                utils.window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 20, 25, link)
+                utils.window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 25, 30, link)
                 logging.info(f"Time taken to process '{keyword}': {time.time() - start_time:.2f} seconds")
         except Exception as exception:
             logging.info(f"An error occurred: {exception}")
