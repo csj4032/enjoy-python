@@ -2,7 +2,7 @@ import logging
 import random
 import time
 
-from selenium.common import NoSuchElementException
+from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
@@ -58,7 +58,7 @@ posts = [
 ]
 
 
-def get_search(driver_, link_, keyword_, selector_, match_element="", timeout_=10):
+def get_search(driver_, link_, keyword_, selector_, match_element="", timeout_=5):
     logging.info(f"Searching for '{keyword_}' in  {selector_},[{match_element}] with link: {link_}")
     try:
         title_elements = WebDriverWait(driver_, timeout_).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_)))
@@ -67,8 +67,9 @@ def get_search(driver_, link_, keyword_, selector_, match_element="", timeout_=1
             if href_ == link_:
                 logging.info(f"Matched for '{keyword_}' in  {selector_},[{match_element}] with link: {link_}")
                 return element_
-    except NoSuchElementException as exception_:
-        logging.error(f"Element with selector '{selector_}' not found: {exception_}")
+    except TimeoutException as exception_:
+        logging.error(f"Element with selector '{selector_}' not found: {exception_.msg}")
+        pass
     return None
 
 
@@ -80,18 +81,17 @@ if __name__ == '__main__':
         link = post['link']
         driver = setup_firefox_driver(configuration)
         try:
-            driver.set_window_size(1280, 1800)
-            driver.set_window_position(-1280, 0)
+            driver.set_window_position(0, 0)
             driver.get(configuration.naver_mobile_url)
             time.sleep(random.uniform(1, 2))
             search_box = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "query")))
             search_box.send_keys(random.choice(post["keywords"]))
             search_box.send_keys(Keys.RETURN)
             matched_element = get_search(driver, link, keyword, "a.aEO4VwHkswcCgUXjRh6w.Lznm151o9qLNLUldttoM", "검색 최상단 영역")
-            time.sleep(random.uniform(2, 2))
+            time.sleep(random.uniform(1, 3))
             if matched_element is None:
                 matched_element = get_search(driver, link, keyword, "a.title_link", "인기글 영역")
-            time.sleep(random.uniform(2, 2))
+            time.sleep(random.uniform(1, 3))
             if matched_element is None:
                 WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.LINK_TEXT, "블로그"))).click()
                 logging.info(f"Clicked on '블로그' link to search in blog section.")
