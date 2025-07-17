@@ -68,6 +68,7 @@ def like_post(posts_, buddy_, limit=10):
 
 if __name__ == '__main__':
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     driver = utils.setup_edge_profile_driver(configuration)
     driver.set_window_position(-500, 0)
     try:
