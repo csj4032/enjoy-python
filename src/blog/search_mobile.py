@@ -54,6 +54,7 @@ posts = [
     {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://m.blog.naver.com/csj4032/223935057219"},
     {"keywords": ["파이썬 Coroutine 예외처리", "파이썬 Iterator", "파이썬 Iterator 예외처리"], "link": "https://m.blog.naver.com/csj4032/223936858166"},
     {"keywords": ["파이썬 예외처리", "파이썬 예외 처리", "파이썬 예외"], "link": "https://m.blog.naver.com/csj4032/223937102638"},
+    {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://m.blog.naver.com/csj4032/223936360808"},
 ]
 
 
