@@ -115,10 +115,16 @@ def write_comment(driver_, comment_):
         driver_.find_element(By.ID, "naverComment__write_textarea").send_keys(comment_)
         time.sleep(random.uniform(1, 2))
         driver_.find_element(By.CSS_SELECTOR, "button.u_cbox_btn_upload").click()
+        alert = WebDriverWait(driver_, 3).until(EC.alert_is_present())
+        if alert:
+            logging.info(f"Alert text after posting comment: {alert.text}")
+            alert.accept()
+            return alert.text
         time.sleep(random.uniform(1, 2))
     except NoSuchElementException:
         logging.error("Comment textarea not found.")
-        return
+        return "Error"
+    return "Success"
 
 
 def call_gemini_api(api_key, model_name, context_=None, generation_config=None, safety_settings=None):

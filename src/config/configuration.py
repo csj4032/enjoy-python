@@ -15,6 +15,11 @@ class Configuration:
         self.naver_blog_mobile_feed_list_url = self.variables.naver_blog_mobile_feed_list_url
         self.mmix_naver_blog_mobile_url = self.variables.mmix_naver_blog_mobile_url
         self.mmix_naver_blog_url = self.variables.mmix_naver_blog_url
+        self.naver_blog_reply_limit_message = self.variables.naver_blog_reply_limit_message
+        self.naver_blog_buddy_daily_add_limit_message = self.variables.naver_blog_buddy_daily_add_limit_message
+        self.naver_blog_buddy_request_pending_cancel_message = self.variables.naver_blog_buddy_request_pending_cancel_message
+        self.naver_blog_buddy_user_limit_reached_message = self.variables.naver_blog_buddy_user_limit_reached_message
+
         self.browser_configuration = BrowserConfiguration(self.variables)
 
     def __getattr__(self, item):
