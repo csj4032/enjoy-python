@@ -104,7 +104,7 @@ if __name__ == '__main__':
             if matched_element is not None:
                 start_time = time.time()
                 matched_element.click()
-                utils.window_scroll(driver, int(random.uniform(20, 25)), 0, int(random.uniform(100, 500)), 20, 25, link)
+                utils.window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 25, 30, link)
                 logging.info(f"Time taken to process '{keyword}': {time.time() - start_time:.2f} seconds")
         except Exception as exception:
             logging.info(f"An error occurred: {exception}")
