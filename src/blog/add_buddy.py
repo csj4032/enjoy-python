@@ -51,7 +51,7 @@ def parse_buddy(buddy):
 
 def get_today_total_visitor_text(driver_):
     try:
-        full_text = WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text
+        full_text = WebDriverWait(driver_, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text
         parts = full_text.split()
         today_count_str = parts[1]
         total_count_str = parts[3]
@@ -130,7 +130,7 @@ if __name__ == '__main__':
                 try:
                     description_paragraph = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl")))
                     logging.info(f"Popup description text: {description_paragraph.text.strip()}")
-                    if description_paragraph.text == "하루에 신청 가능한 이웃수가 초과되어 더이상 이웃을 추가할 수 없습니다.":
+                    if description_paragraph.text == configuration.naver_blog_buddy_daily_add_limit_message:
                         logging.info("Daily buddy limit reached, skipping further additions.")
                         WebDriverWait(driver, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
                         break

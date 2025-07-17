@@ -66,7 +66,8 @@ if __name__ == '__main__':
                     if not is_exist_mmix_reply:
                         comment = get_ollama_comment(post['title'], content[:3000])
                         logging.info(f"Processing reply {index + 1}/{len(posts)}: Visiting post '{post['title']}', Generated reply: {comment}")
-                        comment and utils.write_comment(driver, comment)
+                        if comment and utils.write_comment(driver, comment) == "Limited":
+                            break
                         time.sleep(random.uniform(1, 2))
             except Exception as exception:
                 logging.error(f"Post: {post['name']}, Link: {post['link']}, Title: {post['title']} Error : {exception}")

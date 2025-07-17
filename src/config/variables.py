@@ -24,6 +24,10 @@ class Variables:
         self.mmix_naver_blog_url = None
         self.geckodriver_path = None
         self.msedgedriver_path = None
+        self.naver_blog_reply_limit_message = None
+        self.naver_blog_buddy_daily_add_limit_message = None
+        self.naver_blog_buddy_request_pending_cancel_message = None
+        self.naver_blog_buddy_user_limit_reached_message = None
 
     def configure(self):
         current_directory = os.path.dirname(os.path.abspath(__file__))
@@ -47,3 +51,7 @@ class Variables:
         self.mmix_naver_blog_url = os.getenv('MMIX_NAVER_BLOG_URL')
         self.geckodriver_path = os.getenv('GECKODRIVER_PATH')
         self.msedgedriver_path = os.getenv('MSEDGEDRIVER_PATH')
+        self.naver_blog_reply_limit_message = os.getenv('NAVER_BLOG_REPLY_LIMIT_MESSAGE')
+        self.naver_blog_buddy_daily_add_limit_message = os.getenv('NAVER_BLOG_BUDDY_DAiLY_ADD_LIMIT_MESSAGE')
+        self.naver_blog_buddy_request_pending_cancel_message = os.getenv('NAVER_BLOG_BUDDY_REQUEST_PENDING_CANCEL_MESSAGE')
+        self.naver_blog_buddy_user_limit_reached_message = os.getenv('NAVER_BLOG_BUDDY_USER_LIMIT_REACHED_MESSAGE')
