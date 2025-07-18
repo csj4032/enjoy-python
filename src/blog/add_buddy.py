@@ -5,23 +5,25 @@ import time
 
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 from blog import utils
 from blog.utils import window_scroll_more
 from config.configuration import Configuration
+from selenium.webdriver.remote.webdriver import WebDriver
 
 logging.basicConfig(level=logging.INFO)
 
 
-def window_scroll(driver_: object, range_, x_coord: int, y_coord: int) -> None:
+def window_scroll(driver_: WebDriver, range_, x_coord: int, y_coord: int) -> None:
     for index in range(range_):
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         time.sleep(random.uniform(0, 1))
 
 
-def parse_post(post: object) -> dict:
+def parse_post(post: WebDriver) -> dict:
     try:
         link = post.find_element(By.CLASS_NAME, "link__A4O1D").get_attribute('href')
         name = post.find_element(By.CSS_SELECTOR, ".text__f81dq").text.strip()
@@ -37,7 +39,7 @@ def parse_post(post: object) -> dict:
         return None
 
 
-def parse_buddy(buddy: object) -> dict:
+def parse_buddy(buddy: WebElement) -> dict:
     try:
         blog_name = buddy.find_element(By.CSS_SELECTOR, ".blogname__yjIQj.ell").text.strip()
         nick_name = buddy.find_element(By.CSS_SELECTOR, ".nickname__hHyXx.ell").text.strip()
@@ -49,7 +51,7 @@ def parse_buddy(buddy: object) -> dict:
         return None
 
 
-def get_today_total_visitor_text(driver_: object) -> tuple:
+def get_today_total_visitor_text(driver_: WebDriver) -> tuple:
     try:
         full_text = WebDriverWait(driver_, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text
         parts = full_text.split()
@@ -61,7 +63,7 @@ def get_today_total_visitor_text(driver_: object) -> tuple:
         return 0, 0
 
 
-def get_buddy_count(driver_: object) -> int:
+def get_buddy_count(driver_: WebDriver) -> int:
     try:
         buddy_count_text = WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.buddy__fw6Uo"))).text
         match = re.search(r'[\d,]+', buddy_count_text)
@@ -73,7 +75,7 @@ def get_buddy_count(driver_: object) -> int:
         return 0
 
 
-def get_buddy_subject(driver_: object) -> str:
+def get_buddy_subject(driver_: WebDriver) -> str:
     try:
         return WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.subject__m4PT2"))).text.replace('ㆍ', '')
     except TimeoutException:
@@ -83,6 +85,7 @@ def get_buddy_subject(driver_: object) -> str:
 
 if __name__ == '__main__':
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     driver = utils.setup_edge_profile_driver(configuration)
     driver.set_window_position(-500, 0)
     try:
@@ -171,5 +174,5 @@ if __name__ == '__main__':
         logging.error("An error occurred:", exception)
     finally:
         logging.info("Closing the driver.")
-        time.sleep(random.uniform(1, 5))
+        time.sleep(random.uniform(1, 2))
         driver.quit()

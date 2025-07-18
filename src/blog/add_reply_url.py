@@ -10,11 +10,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
 import blog.utils as utils
-from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
 
-__prompt = "'{0}' 이라는 제목의 {1} 카테고리 블로그 글에 대한 코멘트를 작성해줘. 아래 '{2}' 내용을 참고해서, 남성 방문자 입장에서 자연스러운 한 문장으로 작성해야 해."
+__prompt = "'{0}' 이라는 제목의 {1} 카테고리 블로그 글에 대한 코멘트를 작성해줘. 아래 '{2}' 내용을 참고해서, 대한민국 남성 방문자 입장에서 자연스러운 한 문장으로 작성해야 해."
 
 
 def get_ollama_comment(title_, category_, content_, model='gemma3:latest'):
@@ -32,7 +31,7 @@ def setup_driver():
 if __name__ == '__main__':
     driver = setup_driver()
     try:
-        driver.get("https://m.blog.naver.com/PostView.naver?blogId=shin30233&logNo=223936356948&navType=by")
+        driver.get("https://m.blog.naver.com/cafebj_geoje/223876441415?recommendCode=2&recommendTrackingCode=2")
         category = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.blog_category"))).text.strip()
         title = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
         content = utils.get_content(driver)

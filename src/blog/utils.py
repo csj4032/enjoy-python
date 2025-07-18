@@ -12,13 +12,15 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.safari.options import Options as SafariOptions
+from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-
+from selenium.webdriver.remote.webdriver import WebDriver
 from config.configuration import Configuration
 
 
-def set_firefox_driver(configuration, options) -> object:
+def set_firefox_driver(configuration, options) -> WebDriver:
     configuration.get_browser_headless() and options.add_argument("--headless")
     options.add_argument(f"--window-size={configuration.get_browser_firefox_window_size()}")
     options.set_preference("general.useragent.override", configuration.get_browser_iphone_user_agent())
@@ -26,19 +28,20 @@ def set_firefox_driver(configuration, options) -> object:
     return webdriver.Firefox(service=service, options=options)
 
 
-def setup_firefox_driver(configuration: Configuration) -> object:
+def setup_firefox_driver(configuration: Configuration) -> WebDriver:
     options = FirefoxOptions()
     return set_firefox_driver(configuration, options)
 
 
-def setup_firefox_profile_driver(configuration: Configuration) -> object:
+def setup_firefox_profile_driver(configuration: Configuration) -> WebDriver:
     options = FirefoxOptions()
     options.add_argument("-profile")
     options.add_argument(configuration.get_browser_firefox_profile_path())
+    options.add_argument("--window-size=450,1200")
     return set_firefox_driver(configuration, options)
 
 
-def setup_edge_profile_driver(configuration: Configuration) -> object:
+def setup_edge_profile_driver(configuration: Configuration) -> WebDriver:
     options = EdgeOptions()
     configuration.get_browser_headless() and options.add_argument("--headless")
     options.add_argument(f"--user-data-dir={configuration.get_browser_edge_profile_path()}")
@@ -48,14 +51,23 @@ def setup_edge_profile_driver(configuration: Configuration) -> object:
     return webdriver.Edge(service=service, options=options)
 
 
-def window_scroll(driver_: object, range_: int, x_coord, y_coord, scroll_random_start_time: int = 0, scroll_random_end_time: int = 10, link: str = "") -> None:
+def setup_safari_profile_driver(configuration: Configuration):
+    options = SafariOptions()
+    options.add_argument("--headless") if configuration.get_browser_headless() else None
+    service = SafariService(executable_path='/usr/bin/safaridriver')
+    driver = webdriver.Safari(service=service, options=options)
+    driver.set_window_size(550, 1580)
+    return driver
+
+
+def window_scroll(driver_: WebDriver, range_, x_coord, y_coord, scroll_random_start_time=0, scroll_random_end_time=10, link=""):
     for index_ in range(range_):
         logging.info(f"Scrolling {index_ + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         time.sleep(random.uniform(scroll_random_start_time, scroll_random_end_time))
 
 
-def window_scroll_more(driver_, range_, x_coord, y_coord, selector="button.button_show__VRCFg", scroll_random_start_time=0, scroll_random_end_time=10, link="") -> None:
+def window_scroll_more(driver_: WebDriver, range_, x_coord, y_coord, selector="button.button_show__VRCFg", scroll_random_start_time=0, scroll_random_end_time=10, link="") -> None:
     for index in range(range_):
         logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
@@ -68,7 +80,7 @@ def window_scroll_more(driver_, range_, x_coord, y_coord, selector="button.butto
             pass
 
 
-def window_scroll_top(driver_: object, range_, x_coord, y_coord, selector="button.button_show__VRCFg", link="") -> None:
+def window_scroll_top(driver_: WebDriver, range_, x_coord, y_coord, selector="button.button_show__VRCFg", link="") -> None:
     for index in range(range_):
         logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
@@ -80,7 +92,7 @@ def window_scroll_top(driver_: object, range_, x_coord, y_coord, selector="butto
             pass
 
 
-def get_content(driver_: object) -> str:
+def get_content(driver_: WebDriver) -> str:
     try:
         content_elements = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "p.se-text-paragraph")))
         return " ".join([element.text for element in content_elements])
@@ -89,7 +101,7 @@ def get_content(driver_: object) -> str:
         return ""
 
 
-def get_reply_button(driver_: object) -> object:
+def get_reply_button(driver_: WebDriver) -> object:
     try:
         return WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_reply")))
     except TimeoutException:
@@ -97,7 +109,7 @@ def get_reply_button(driver_: object) -> object:
         return None
 
 
-def get_mmix_reply(driver_: object) -> bool:
+def get_mmix_reply(driver_: WebDriver) -> bool:
     try:
         name_elements = WebDriverWait(driver_, 5).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.u_cbox_name")))
         for name in name_elements:
@@ -110,7 +122,7 @@ def get_mmix_reply(driver_: object) -> bool:
         return False
 
 
-def write_comment(driver_: object, comment_: str) -> str:
+def write_comment(driver_: WebDriver, comment_: str) -> str:
     try:
         driver_.find_element(By.ID, "naverComment__write_textarea").send_keys(comment_)
         time.sleep(random.uniform(1, 2))
@@ -166,7 +178,7 @@ def call_gemini_api(api_key, model_name, context_=None, generation_config=None, 
     return response.text
 
 
-def call_ollama_api(prompt, model='llama3:latest'):
+def call_ollama_api(prompt, model='gemma3:latest'):
     url = "http://localhost:11434/api/generate"
     payload = {"model": model, "prompt": prompt, "stream": False}
     response = requests.post(url, json=payload)

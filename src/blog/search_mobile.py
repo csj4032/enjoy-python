@@ -3,9 +3,11 @@ import random
 import time
 from typing import Optional
 
-from selenium.common import NoSuchElementException, TimeoutException
+from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -59,7 +61,7 @@ posts = [
 ]
 
 
-def get_search(driver_: object, link_: str, keyword_: str, selector_: str, match_element: str = "", timeout_: int = 5) -> Optional[object]:
+def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, match_element: str = "", timeout_: int = 5) -> Optional[WebElement]:
     logging.info(f"Searching for '{keyword_}' in  {selector_},[{match_element}] with link: {link_}")
     try:
         title_elements = WebDriverWait(driver_, timeout_).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_)))
@@ -101,7 +103,7 @@ if __name__ == '__main__':
             if matched_element is not None:
                 start_time = time.time()
                 matched_element.click()
-                utils.window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 25, 30, link)
+                utils.window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 20, 25, link)
                 logging.info(f"Time taken to process '{keyword}': {time.time() - start_time:.2f} seconds")
         except Exception as exception:
             logging.info(f"An error occurred: {exception}")

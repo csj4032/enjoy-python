@@ -52,6 +52,6 @@ class Variables:
         self.geckodriver_path = os.getenv('GECKODRIVER_PATH')
         self.msedgedriver_path = os.getenv('MSEDGEDRIVER_PATH')
         self.naver_blog_reply_limit_message = os.getenv('NAVER_BLOG_REPLY_LIMIT_MESSAGE')
-        self.naver_blog_buddy_daily_add_limit_message = os.getenv('NAVER_BLOG_BUDDY_DAiLY_ADD_LIMIT_MESSAGE')
+        self.naver_blog_buddy_daily_add_limit_message = os.getenv('NAVER_BLOG_BUDDY_DAILY_ADD_LIMIT_MESSAGE')
         self.naver_blog_buddy_request_pending_cancel_message = os.getenv('NAVER_BLOG_BUDDY_REQUEST_PENDING_CANCEL_MESSAGE')
         self.naver_blog_buddy_user_limit_reached_message = os.getenv('NAVER_BLOG_BUDDY_USER_LIMIT_REACHED_MESSAGE')
