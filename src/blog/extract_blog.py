@@ -1,7 +1,7 @@
 import logging
 import random
 import time
-from pydoc import browse
+from typing import List, Dict, Optional
 
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
@@ -13,7 +13,7 @@ from config.configuration import Configuration
 logging.basicConfig(level=logging.INFO)
 
 
-def parse_post(post_element):
+def parse_post(post_element: object) -> Optional[Dict[str, str]]:
     try:
         title = post_element.find_element(By.CSS_SELECTOR, "strong.title__UUn4H").text
         link = post_element.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute("href")
@@ -23,7 +23,7 @@ def parse_post(post_element):
         return None
 
 
-def get_posts(driver_, timeout=1, selector="div.card__reUkU"):
+def get_posts(driver_: object, timeout: int = 1, selector: str = "div.card__reUkU") -> List[Dict[str, Optional[str]]]:
     try:
         posts_ = WebDriverWait(driver_, timeout).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parse_post(post_) for post_ in posts_ if post_.is_displayed()]

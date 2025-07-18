@@ -15,13 +15,13 @@ from config.configuration import Configuration
 logging.basicConfig(level=logging.INFO)
 
 
-def window_scroll(driver_, range_, x_coord, y_coord):
+def window_scroll(driver_: object, range_, x_coord: int, y_coord: int) -> None:
     for index in range(range_):
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         time.sleep(random.uniform(0, 1))
 
 
-def parse_post(post):
+def parse_post(post: object) -> dict:
     try:
         link = post.find_element(By.CLASS_NAME, "link__A4O1D").get_attribute('href')
         name = post.find_element(By.CSS_SELECTOR, ".text__f81dq").text.strip()
@@ -37,7 +37,7 @@ def parse_post(post):
         return None
 
 
-def parse_buddy(buddy):
+def parse_buddy(buddy: object) -> dict:
     try:
         blog_name = buddy.find_element(By.CSS_SELECTOR, ".blogname__yjIQj.ell").text.strip()
         nick_name = buddy.find_element(By.CSS_SELECTOR, ".nickname__hHyXx.ell").text.strip()
@@ -49,7 +49,7 @@ def parse_buddy(buddy):
         return None
 
 
-def get_today_total_visitor_text(driver_):
+def get_today_total_visitor_text(driver_: object) -> tuple:
     try:
         full_text = WebDriverWait(driver_, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text
         parts = full_text.split()
@@ -61,7 +61,7 @@ def get_today_total_visitor_text(driver_):
         return 0, 0
 
 
-def get_buddy_count(driver_):
+def get_buddy_count(driver_: object) -> int:
     try:
         buddy_count_text = WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.buddy__fw6Uo"))).text
         match = re.search(r'[\d,]+', buddy_count_text)
@@ -73,7 +73,7 @@ def get_buddy_count(driver_):
         return 0
 
 
-def get_buddy_subject(driver_):
+def get_buddy_subject(driver_: object) -> str:
     try:
         return WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.subject__m4PT2"))).text.replace('ㆍ', '')
     except TimeoutException:
