@@ -1,10 +1,11 @@
 import logging
+from typing import Optional
 from unicodedata import category
 
 from PIL import Image, ImageDraw, ImageFont
 
 
-def generate_thumbnail(category_="", title_="", output_path_=None, font_=None):
+def generate_thumbnail(category_: str = "", title_: str = "", output_path_: Optional[str] = None, font_: Optional[str] = None) -> None:
     width, height = 1280, 720
     background_color = (255, 255, 255)
     category_color =(46,140,255)
@@ -21,7 +22,7 @@ def generate_thumbnail(category_="", title_="", output_path_=None, font_=None):
     category_x = (width - (category_size[2] - category_size[0])) // 2
     title_x = (width - (title_size[2] - title_size[0])) // 2
     draw.text((category_x, start_y), category_, fill=category_color, font=font_category)
-    draw.text((title_x, start_y + (category_size[3] - category_size[1]) + spacing), title, fill=title_color, font=font_title, align="center")
+    draw.text((title_x, start_y + (category_size[3] - category_size[1]) + spacing), title_, fill=title_color, font=font_title, align="center")
     image.save(output_path_)
     logging.info(f"이미지 저장 완료: {output_path_}")
 
