@@ -171,5 +171,5 @@ if __name__ == '__main__':
         logging.error("An error occurred:", exception)
     finally:
         logging.info("Closing the driver.")
-        time.sleep(random.uniform(1000, 5000))
+        time.sleep(random.uniform(1, 5))
         driver.quit()
