@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+from typing import Optional
 
 from selenium import webdriver
 from selenium.common import NoSuchElementException
@@ -65,7 +66,7 @@ posts = [
 ]
 
 
-def setup_driver():
+def setup_driver() -> object:
     random_browser = random.choice(["firefox"])
     if random_browser == "chrome":
         options = ChromeOptions()
@@ -85,7 +86,7 @@ def setup_driver():
     return webdriver.Firefox(service=service, options=options)
 
 
-def get_search_top(driver_, link_, keyword_, selector, match_element=""):
+def get_search_top(driver_: object, link_: str, keyword_: str, selector: str, match_element: str = "") -> Optional[object]:
     for element_ in driver_.find_elements(By.CSS_SELECTOR, selector):
         try:
             href_ = element_.get_attribute("href")
