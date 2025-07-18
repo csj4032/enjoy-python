@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+from typing import Optional
 
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
@@ -58,7 +59,7 @@ posts = [
 ]
 
 
-def get_search(driver_, link_, keyword_, selector_, match_element="", timeout_=5):
+def get_search(driver_: object, link_: str, keyword_: str, selector_: str, match_element: str = "", timeout_: int = 5) -> Optional[object]:
     logging.info(f"Searching for '{keyword_}' in  {selector_},[{match_element}] with link: {link_}")
     try:
         title_elements = WebDriverWait(driver_, timeout_).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_)))

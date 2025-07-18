@@ -1,8 +1,6 @@
 import logging
 import random
 import time
-from urllib.parse import urlparse, parse_qs
-
 from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
@@ -31,7 +29,7 @@ def setup_driver():
     return webdriver.Firefox(service=service, options=options)
 
 
-def parse_post(post_):
+def parse_post(post_: object) -> dict:
     try:
         link = post_.find_element(By.CSS_SELECTOR, "a.link__A4O1D").get_attribute('href')
         name = post_.find_element(By.CSS_SELECTOR, "span.text__f81dq").text
@@ -42,7 +40,7 @@ def parse_post(post_):
         return None
 
 
-def get_recommend_posts(driver_):
+def get_recommend_posts(driver_: object) -> list:
     try:
         posts_elements = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.postlist__qxOgF")))
         logging.info(f"Found {len(posts_elements)} posts.")
@@ -52,13 +50,13 @@ def get_recommend_posts(driver_):
         return []
 
 
-def get_gemini_comment(gemini_api_key, gemini_model, title, content_):
+def get_gemini_comment(gemini_api_key: str, gemini_model: str, title: str, content_: str) -> str:
     response = utils.call_gemini_api(gemini_api_key, gemini_model, __prompt.format(title, content_), __generation_config)
     return response.strip() if response else ""
 
 
-def get_ollama_comment(title, content_):
-    response = utils.call_ollama_api(__prompt.format(title, content_), "exaone3.5:latest")
+def get_ollama_comment(title: str, content_: str) -> str:
+    response = utils.call_ollama_api(__prompt.format(title, content_), "gemma3:latest")
     return response.strip() if response else ""
 
 

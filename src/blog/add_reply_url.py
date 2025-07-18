@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 __prompt = "'{0}' 이라는 제목의 {1} 카테고리 블로그 글에 대한 코멘트를 작성해줘. 아래 '{2}' 내용을 참고해서, 남성 방문자 입장에서 자연스러운 한 문장으로 작성해야 해."
 
 
-def get_ollama_comment(title_, category_, content_, model='exaone3.5:latest'):
+def get_ollama_comment(title_, category_, content_, model='gemma3:latest'):
     response = utils.call_ollama_api(__prompt.format(title_, category_, content_), model=model)
     return response.strip() if response else ""
 
