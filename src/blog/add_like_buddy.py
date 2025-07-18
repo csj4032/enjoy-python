@@ -1,6 +1,7 @@
 import logging
 import random
 import time
+from typing import List, Optional, Dict
 
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
@@ -14,7 +15,7 @@ from config.configuration import Configuration
 logging.basicConfig(level=logging.INFO)
 
 
-def parse_buddy(buddy_):
+def parse_buddy(buddy_: object) -> Optional[Dict[str, str]]:
     try:
         blog_name = buddy_.find_element(By.CSS_SELECTOR, ".desc__mzlZG").text.strip()
         nick_name = buddy_.find_element(By.CSS_SELECTOR, ".name__jKV9Z").text.strip()
@@ -26,14 +27,14 @@ def parse_buddy(buddy_):
         return None
 
 
-def get_neighbor(driver_):
+def get_neighbor(driver_: object) -> List[Dict[str, str]]:
     buddies = driver_.find_elements(By.CSS_SELECTOR, "li.item__FZ64x")
     neighbor_ = [parsed for buddy_ in buddies if (parsed := parse_buddy(buddy_)) is not None]
     logging.info(f"Found {len(neighbor_)} neighbors.")
     return random.sample(neighbor_, len(neighbor_))
 
 
-def try_click_element(driver_, selector, timeout=3):
+def try_click_element(driver_: object, selector: str, timeout: int = 3) -> None:
     try:
         WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
     except TimeoutException:
@@ -41,7 +42,7 @@ def try_click_element(driver_, selector, timeout=3):
         pass
 
 
-def get_posts(driver_):
+def get_posts(driver_: object) -> List[object]:
     try:
         posts_ = WebDriverWait(driver_, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.card__reUkU")))
         logging.info(f"Found {len(posts_)} posts.")
@@ -51,7 +52,7 @@ def get_posts(driver_):
         return []
 
 
-def like_post(posts_, buddy_, limit=10):
+def like_post(posts_: List[object], buddy_: Dict[str, str], limit: int = 10) -> None:
     if not posts_:
         logging.warning(f"No posts found for {buddy_['nick_name']}.")
         return
