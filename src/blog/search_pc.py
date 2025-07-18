@@ -62,6 +62,7 @@ posts = [
     {"keywords": ["파이썬 왈러스 연산자", "파이썬 왈러스", "파이썬 연산자", "Python 왈러스"], "link": "https://blog.naver.com/csj4032/223930544260"},
     {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://blog.naver.com/csj4032/223934421842"},
     {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://blog.naver.com/csj4032/223935057219"},
+    {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://blog.naver.com/csj4032/223936360808"},
 ]
 
 
