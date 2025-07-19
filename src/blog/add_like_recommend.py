@@ -8,9 +8,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from common.webs import window_scroll_more, setup_firefox_profile_driver
 from config.configuration import Configuration
-
-logging.basicConfig(level=logging.INFO)
 
 
 def parse_post(post_):
@@ -42,12 +41,14 @@ def get_like_button(driver_, selector="a.u_likeit_list_btn._button.off"):
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
-    driver = utils.setup_firefox_profile_driver(configuration)
-    driver.set_window_position(-450, 0)
+    configuration.set_browser_headless(False)
+    driver = setup_firefox_profile_driver(configuration)
+    driver.set_window_position(-1000, 0)
     try:
         driver.get(configuration.naver_blog_mobile_recommendation_url)
-        utils.window_scroll_more(driver, 100, 0, 500, "button.button_show__VRCFg", 0, 1, configuration.naver_blog_mobile_recommendation_url)
+        window_scroll_more(driver, 100, 0, 500, "button.button_show__VRCFg", 0, 1, configuration.naver_blog_mobile_recommendation_url)
         time.sleep(random.uniform(1, 2))
         posts = get_recommend_posts(driver, "div.item__PxpH8")
         post_count = len(posts)
@@ -58,7 +59,7 @@ if __name__ == '__main__':
             if get_like_button(driver, "a.u_likeit_list_btn._button.on") is not None:
                 logging.info(f"Post already liked: {post['title']}")
                 continue
-            utils.window_scroll_more(driver, 5, 0, 1000, "button.button_show__VRCFg", 0, 1, post['link'])
+            window_scroll_more(driver, 5, 0, 1000, "button.button_show__VRCFg", 0, 1, post['link'])
             driver.execute_script("arguments[0].click();", get_like_button(driver, "a.u_likeit_list_btn._button.off"))
             time.sleep(random.uniform(1, 2))
     except TimeoutException as exception:
