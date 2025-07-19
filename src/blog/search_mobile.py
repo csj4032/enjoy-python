@@ -58,6 +58,7 @@ posts = [
     {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://m.blog.naver.com/csj4032/223936360808"},
     {"keywords": ["파이썬 예외처리", "파이썬 예외 처리", "파이썬 예외"], "link": "https://m.blog.naver.com/csj4032/223937102638"},
     {"keywords": ["파이썬 Virtual Environment", "파이썬 Virtual", "파이썬 가상환경"], "link": "https://m.blog.naver.com/csj4032/223938902715"},
+    {"keywords": ["파이썬 PIP 패키지 관리자", "파이썬 PIP", "파이썬 패키지 관리자"], "link": "https://m.blog.naver.com/csj4032/223939569798"},
 ]
 
 

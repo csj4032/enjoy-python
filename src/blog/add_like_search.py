@@ -3,7 +3,7 @@ import random
 import time
 from typing import List, Dict, Optional
 
-from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -19,7 +19,7 @@ from config.configuration import Configuration
 def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> None:
     try:
         WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
-    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException) as e:
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as e:
         logging.error(f"Element with selector '{selector}' not found or not clickable.")
         pass
 

@@ -1,4 +1,5 @@
 import logging
+import random
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
 
@@ -98,18 +99,21 @@ def get_google_trends(google_trends_rss_url: str, geo="KR") -> List[TrendItem]:
     return [TrendItem.from_xml(item) for item in soup.find_all('item')]
 
 
-def get_naver_blog_results_by_trend(query: str, url: str, client_id: str, client_secret: str, display: int = 100, start: int = 1, page: int = 2) -> List[NaverSearchResult]:
+def get_naver_blog_results_by_trend(query: str, url: str, client_id: str, client_secret: str, display: int = 100, page: int = 2) -> List[NaverSearchResult]:
     return [NaverSearchResult.from_dict(get_naver_blog_api_response(query, url, client_id, client_secret, display, page_no * display - (display - 1), "date")) for page_no in range(1, page)]
 
 
 def get_naver_blog_results_with_trends(configuration: Configuration) -> List[Dict[str, Item]]:
     trends = get_google_trends(configuration.google_trends_rss_url, geo="KR")
-    result = [{"keyword": trend.title, "blogs": get_naver_blog_results_by_trend(trend.title, configuration.naver_api_search_blog_url, configuration.naver_api_client_id, configuration.naver_api_client_secret)} for trend in trends]
+    result = [{"keyword": trend.title,
+               "blogs": get_naver_blog_results_by_trend(trend.title, configuration.naver_api_search_blog_url, configuration.naver_api_client_id, configuration.naver_api_client_secret, configuration.naver_api_display)}
+              for trend in trends]
     return [{"keyword": item["keyword"], "blog": blog_item} for item in result for naver_result in item["blogs"] for blog_item in naver_result.items]
 
 
 def get_mobile_naver_blog_results_by_trend(configuration: Configuration) -> List[Item]:
-    return [value["blog"] for value in get_naver_blog_results_with_trends(configuration) if "m.blog.naver.com" in value["blog"].mobile_link]
+    blogs = [value["blog"] for value in get_naver_blog_results_with_trends(configuration) if "m.blog.naver.com" in value["blog"].mobile_link]
+    return random.sample(blogs, len(blogs))
 
 
 def get_naver_blog_api_response(query: str, url: str, client_id: str, client_secret: str, display: int = 10, start: int = 1, sort: str = "sim") -> Optional[dict]:

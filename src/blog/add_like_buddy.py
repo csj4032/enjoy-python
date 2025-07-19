@@ -11,7 +11,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.webs import setup_firefox_profile_driver, window_scroll
+from common.webs import setup_firefox_profile_driver, window_scroll, setup_edge_profile_driver
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
@@ -61,8 +61,7 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], buddy_: Dict[str, st
     for index_, post in enumerate(posts_[:random.randint(5, limit)]):
         try:
             time.sleep(random.uniform(2, 3))
-            like_button = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
-            driver.execute_script("arguments[0].click();", like_button)
+            driver.execute_script("arguments[0].click();", WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off"))))
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
             logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {buddy_['nick_name']} [{href_}]")
         except Exception as exception:
@@ -72,8 +71,9 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], buddy_: Dict[str, st
 
 if __name__ == '__main__':
     configuration = Configuration()
-    driver = setup_firefox_profile_driver(configuration)
-    driver.set_window_position(-550, 0)
+    configuration.set_browser_headless(False)
+    driver = setup_edge_profile_driver(configuration)
+    driver.set_window_position(-500, 0)
     try:
         driver.get(configuration.naver_blog_mobile_buddy_list_url)
         you_add_to_click = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-click-area='ngr.youadd']")))
