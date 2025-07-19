@@ -19,6 +19,7 @@ class Variables:
         self.naver_api_client_id = None
         self.naver_api_client_secret = None
         self.naver_api_search_blog_url = None
+        self.naver_api_display = None
         self.naver_mobile_url = None
         self.naver_blog_mobile_url = None
         self.naver_blog_mobile_buddy_list_url = None
@@ -50,6 +51,7 @@ class Variables:
         self.naver_api_client_id = os.getenv('NAVER_API_CLIENT_ID')
         self.naver_api_client_secret = os.getenv('NAVER_API_CLIENT_SECRET')
         self.naver_api_search_blog_url = os.getenv('NAVER_API_SEARCH_BLOG_URL')
+        self.naver_api_display = int(os.getenv('NAVER_API_DISPLAY', 100))
         self.naver_mobile_url = os.getenv('NAVER_MOBILE_URL')
         self.naver_blog_mobile_url = os.getenv('NAVER_BLOG_MOBILE_URL')
         self.naver_blog_mobile_buddy_list_url = os.getenv('NAVER_BLOG_MOBILE_BUDDY_LIST_URL')
