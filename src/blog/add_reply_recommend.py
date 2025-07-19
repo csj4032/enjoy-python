@@ -63,6 +63,15 @@ def get_ollama_comment(title: str, content_: str) -> str:
     return response.strip() if response else ""
 
 
+def generate_and_write_comment_if_needed(driver_: WebDriver, post_: dict, content_: str, is_exist_mmix_reply_: bool) -> None:
+    if not is_exist_mmix_reply_:
+        comment = get_ollama_comment(post_['title'], content_[:3000])
+        logging.info(f"Post: {post_['name']} Generated comment: {comment}")
+        if comment:
+            utils.write_comment(driver_, comment)
+            time.sleep(random.uniform(1, 2))
+
+
 if __name__ == '__main__':
     configuration = Configuration()
     driver = utils.setup_firefox_profile_driver(configuration)
@@ -83,11 +92,7 @@ if __name__ == '__main__':
                     time.sleep(random.uniform(1, 2))
                     is_exist_mmix_reply = utils.get_mmix_reply(driver)
                     logging.info(f"Post: {post['name']} Mmix reply exists: {is_exist_mmix_reply}")
-                    if not is_exist_mmix_reply:
-                        comment = get_ollama_comment(post['title'], content[:3000])
-                        logging.info(f"Post: {post['name']} Generated comment: {comment}")
-                        comment and utils.write_comment(driver, comment)
-                        time.sleep(random.uniform(1, 2))
+                    generate_and_write_comment_if_needed(driver, post, content, is_exist_mmix_reply)
             except Exception as e:
                 logging.error(f"Error processing post {post['name']}: {e}")
                 pass

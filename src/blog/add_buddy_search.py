@@ -14,8 +14,6 @@ from common.search import get_mobile_naver_blog_results_by_trend
 from common.webs import setup_edge_profile_driver
 from config.configuration import Configuration
 
-logging.basicConfig(level=logging.INFO)
-
 
 def window_scroll(driver_: WebDriver, range_, x_coord: int, y_coord: int) -> None:
     for index_ in range(range_):
@@ -105,6 +103,7 @@ def click_buddy_add_button(driver_: WebDriver) -> None:
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
     configuration.set_browser_headless(False)
     blogs = get_mobile_naver_blog_results_by_trend(configuration)
