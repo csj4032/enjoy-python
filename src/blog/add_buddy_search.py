@@ -2,6 +2,7 @@ import logging
 import random
 import re
 import time
+from typing import Tuple
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
@@ -22,13 +23,10 @@ def window_scroll(driver_: WebDriver, range_, x_coord: int, y_coord: int) -> Non
         time.sleep(random.uniform(0, 1))
 
 
-def get_today_total_visitor_text(driver_: WebDriver) -> tuple:
+def get_today_total_visitor_text(driver_: WebDriver) -> Tuple[int, int]:
     try:
-        full_text = WebDriverWait(driver_, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text
-        parts = full_text.split()
-        today_count_str = parts[1]
-        total_count_str = parts[3]
-        return int(today_count_str.replace(',', '')), int(total_count_str.replace(',', ''))
+        parts = WebDriverWait(driver_, 5).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text.split()
+        return int(parts[1].replace(',', '')), int(parts[3].replace(',', ''))
     except TimeoutException:
         logging.error("Failed to retrieve today's total visitor text.")
         return 0, 0
@@ -36,10 +34,10 @@ def get_today_total_visitor_text(driver_: WebDriver) -> tuple:
 
 def get_buddy_count(driver_: WebDriver) -> int:
     try:
-        buddy_count_text = WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "span.buddy__fw6Uo"))).text
-        match = re.search(r'[\d,]+', buddy_count_text)
-        if match:
-            return int(match.group(0).replace(',', ''))
+        if match := re.search(r'[\d,]+', WebDriverWait(driver_, 3).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "span.buddy__fw6Uo"))
+        ).text):
+            return int(match[0].replace(',', ''))
         return 0
     except TimeoutException:
         logging.error("Failed to retrieve buddy count.")
@@ -56,22 +54,23 @@ def get_subject(driver_: WebDriver) -> str:
 
 def handle_buddy_popup(driver_, blog_, configuration_):
     try:
-        description_paragraph_ = WebDriverWait(driver_, 1).until(EC.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl")))
-        desc_text_ = description_paragraph_.text.strip()
-        logging.info(f"Popup description text: {desc_text_}")
-        if desc_text_ == configuration_.naver_blog_buddy_daily_add_limit_message:
+        desc_text = WebDriverWait(driver_, 1).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl"))
+        ).text.strip()
+        logging.info(f"Popup description text: {desc_text}")
+        if desc_text == configuration_.naver_blog_buddy_daily_add_limit_message:
             logging.info("Daily buddy limit reached, skipping further additions.")
             WebDriverWait(driver_, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
             return "break"
-        if desc_text_ == "그룹이 꽉참":
+        if desc_text == "그룹이 꽉참":
             logging.info(f"{blog_.nick_name} has too many buddies, skipping.")
             WebDriverWait(driver_, 1).until(EC.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
             return "break"
-        if desc_text_ == "서로이웃 신청 진행중입니다. 서로이웃\n신청을 취소하시겠습니까?" or desc_text_ == "서로이웃 신청 진행중입니다. 서로이웃신청을 취소하시겠습니까?":
+        if desc_text in ("서로이웃 신청 진행중입니다. 서로이웃\n신청을 취소하시겠습니까?", "서로이웃 신청 진행중입니다. 서로이웃신청을 취소하시겠습니까?"):
             logging.info(f"Already a buddy with {blog_.nick_name}, skipping.")
             WebDriverWait(driver_, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
             return "continue"
-        if desc_text_ == "상대방의 이웃수가 5,000명이 초과되어 더 이상 이웃을 추가할 수 없습니다.":
+        if desc_text == "상대방의 이웃수가 5,000명이 초과되어 더 이상 이웃을 추가할 수 없습니다.":
             logging.info(f"{blog.nick_name} has too many buddies, skipping.")
             WebDriverWait(driver_, 1).until(EC.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
             return "continue"
