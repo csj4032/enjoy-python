@@ -1,11 +1,14 @@
 import logging
 import random
 import time
+from typing import Optional
 from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -29,7 +32,7 @@ def setup_driver():
     return webdriver.Firefox(service=service, options=options)
 
 
-def parse_post(post_: object) -> dict:
+def parse_post(post_: WebElement) -> Optional[dict]:
     try:
         link = post_.find_element(By.CSS_SELECTOR, "a.link__A4O1D").get_attribute('href')
         name = post_.find_element(By.CSS_SELECTOR, "span.text__f81dq").text
@@ -40,7 +43,7 @@ def parse_post(post_: object) -> dict:
         return None
 
 
-def get_recommend_posts(driver_: object) -> list:
+def get_recommend_posts(driver_: WebDriver) -> list:
     try:
         posts_elements = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.postlist__qxOgF")))
         logging.info(f"Found {len(posts_elements)} posts.")
@@ -79,14 +82,14 @@ if __name__ == '__main__':
                     driver.execute_script("arguments[0].click();", reply_button)
                     time.sleep(random.uniform(1, 2))
                     is_exist_mmix_reply = utils.get_mmix_reply(driver)
-                    logging.info(f"Processing buddy {index + 1}/{posts_count} Post: {post['name']}, Title: {post['title']} MMIX reply exists: {is_exist_mmix_reply}")
+                    logging.info(f"Post: {post['name']} Mmix reply exists: {is_exist_mmix_reply}")
                     if not is_exist_mmix_reply:
                         comment = get_ollama_comment(post['title'], content[:3000])
                         logging.info(f"Post: {post['name']} Generated comment: {comment}")
                         comment and utils.write_comment(driver, comment)
                         time.sleep(random.uniform(1, 2))
             except Exception as e:
-                logging.error(f"Post: {post['name']}, Link: {post['link']}, Title: {post['title']} Error : {e}")
+                logging.error(f"Error processing post {post['name']}: {e}")
                 pass
     except Exception as e:
         logging.error(f"An error occurred: {e}")
