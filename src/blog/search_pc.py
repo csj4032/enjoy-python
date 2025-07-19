@@ -13,12 +13,16 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.safari.options import Options as SafariOptions
 from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
+from common.webs import window_scroll
 
 logging.basicConfig(level=logging.INFO)
 
@@ -61,10 +65,12 @@ posts = [
     {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://blog.naver.com/csj4032/223934421842"},
     {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://blog.naver.com/csj4032/223935057219"},
     {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://blog.naver.com/csj4032/223936360808"},
+    {"keywords": ["파이썬 Virtual Environment", "파이썬 Virtual", "파이썬 가상환경"], "link": "https://blog.naver.com/csj4032/223938902715"},
+    {"keywords": ["파이썬 PIP 패키지 관리자", "파이썬 PIP", "파이썬 패키지 관리자"], "link": "https://blog.naver.com/csj4032/223939569798"},
 ]
 
 
-def setup_driver() -> object:
+def setup_driver() -> WebDriver:
     random_browser = random.choice(["firefox"])
     if random_browser == "chrome":
         options = ChromeOptions()
@@ -84,7 +90,7 @@ def setup_driver() -> object:
     return webdriver.Firefox(service=service, options=options)
 
 
-def get_search_top(driver_: object, link_: str, keyword_: str, selector: str, match_element: str = "") -> Optional[object]:
+def get_search_top(driver_: WebDriver, link_: str, keyword_: str, selector: str, match_element: str = "") -> WebElement | None:
     for element_ in driver_.find_elements(By.CSS_SELECTOR, selector):
         try:
             href_ = element_.get_attribute("href")
@@ -143,7 +149,7 @@ if __name__ == '__main__':
                 driver.switch_to.frame(main_iframe)
                 time.sleep(random.uniform(1, 10))
                 logging.info(f"Successfully navigated to {keyword} post: {link}")
-                utils.window_scroll(driver, 20, 0, random.uniform(100, 500), 25, 35, link)
+                window_scroll(driver, 20, 0, random.uniform(100, 500), 25, 35, link)
                 driver.switch_to.default_content()
                 logging.info(f"Time taken to process '{keyword}': {time.time() - start_time:.2f} seconds")
             else:
