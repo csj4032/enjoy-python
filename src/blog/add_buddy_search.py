@@ -35,7 +35,7 @@ def get_today_total_visitor_text(driver_: WebDriver) -> Tuple[int, int]:
 def get_buddy_count(driver_: WebDriver) -> int:
     try:
         if match := re.search(r'[\d,]+', WebDriverWait(driver_, 3).until(
-            EC.presence_of_element_located((By.CSS_SELECTOR, "span.buddy__fw6Uo"))
+                EC.presence_of_element_located((By.CSS_SELECTOR, "span.buddy__fw6Uo"))
         ).text):
             return int(match[0].replace(',', ''))
         return 0
@@ -112,7 +112,7 @@ if __name__ == '__main__':
     driver.set_window_position(-500, 0)
     try:
         for index, blog in enumerate(blogs):
-            logging.info(f"Buddy {index + 1}/{len(blogs)},  name :{blog.nick_name}, link: {blog.mobile_link}")
+            logging.info(f"Processing {index + 1}/{len(blogs)}: {blog.nick_name}")
             time.sleep(random.uniform(2, 3))
             driver.get(blog.mobile_link)
             try:
@@ -128,7 +128,7 @@ if __name__ == '__main__':
                 result = handle_buddy_popup(driver, blog, configuration)
                 if result == "break":
                     break
-                if result == "continue":
+                elif result == "continue":
                     continue
                 add_buddy_process(driver, blog, subject)
             except TimeoutException:
