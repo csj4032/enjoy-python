@@ -11,8 +11,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from blog import utils
-from blog.utils import setup_firefox_driver
+from common.webs import setup_firefox_driver, window_scroll
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
@@ -56,8 +55,9 @@ posts = [
     {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://m.blog.naver.com/csj4032/223934421842"},
     {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://m.blog.naver.com/csj4032/223935057219"},
     {"keywords": ["파이썬 Coroutine 예외처리", "파이썬 Iterator", "파이썬 Iterator 예외처리"], "link": "https://m.blog.naver.com/csj4032/223936858166"},
-    {"keywords": ["파이썬 예외처리", "파이썬 예외 처리", "파이썬 예외"], "link": "https://m.blog.naver.com/csj4032/223937102638"},
     {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://m.blog.naver.com/csj4032/223936360808"},
+    {"keywords": ["파이썬 예외처리", "파이썬 예외 처리", "파이썬 예외"], "link": "https://m.blog.naver.com/csj4032/223937102638"},
+    {"keywords": ["파이썬 Virtual Environment", "파이썬 Virtual", "파이썬 가상환경"], "link": "https://m.blog.naver.com/csj4032/223938902715"},
 ]
 
 
@@ -103,7 +103,7 @@ if __name__ == '__main__':
             if matched_element is not None:
                 start_time = time.time()
                 matched_element.click()
-                utils.window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 20, 25, link)
+                window_scroll(driver, int(random.uniform(25, 30)), 0, int(random.uniform(100, 500)), 20, 25, link)
                 logging.info(f"Time taken to process '{keyword}': {time.time() - start_time:.2f} seconds")
         except Exception as exception:
             logging.info(f"An error occurred: {exception}")

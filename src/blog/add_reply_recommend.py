@@ -9,7 +9,7 @@ from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-import blog.utils as utils
+import common.webs as utils
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)

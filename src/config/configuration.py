@@ -8,6 +8,10 @@ class Configuration:
         self.environment = self.variables.environment
         self.gemini_api_key = self.variables.gemini_api_key
         self.gemini_model = self.variables.gemini_model
+        self.google_trends_rss_url = self.variables.google_trends_rss_url
+        self.naver_api_client_id = self.variables.naver_api_client_id
+        self.naver_api_client_secret = self.variables.naver_api_client_secret
+        self.naver_api_search_blog_url = self.variables.naver_api_search_blog_url
         self.naver_mobile_url = self.variables.naver_mobile_url
         self.naver_blog_mobile_url = self.variables.naver_blog_mobile_url
         self.naver_blog_mobile_buddy_list_url = self.variables.naver_blog_mobile_buddy_list_url

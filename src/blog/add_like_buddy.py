@@ -11,7 +11,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from blog import utils
+from common.webs import setup_firefox_profile_driver, window_scroll
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
@@ -72,15 +72,14 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], buddy_: Dict[str, st
 
 if __name__ == '__main__':
     configuration = Configuration()
-    configuration.set_browser_headless(False)
-    driver = utils.setup_firefox_profile_driver(configuration)
+    driver = setup_firefox_profile_driver(configuration)
     driver.set_window_position(-550, 0)
     try:
         driver.get(configuration.naver_blog_mobile_buddy_list_url)
         you_add_to_click = WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "button[data-click-area='ngr.youadd']")))
         you_add_to_click.click()
         time.sleep(random.uniform(1, 2))
-        utils.window_scroll(driver, 200, 0, 500, 0, 1, configuration.naver_blog_mobile_buddy_list_url)
+        window_scroll(driver, 200, 0, 500, 0, 1, configuration.naver_blog_mobile_buddy_list_url)
         neighbor = get_neighbor(driver)
         for index, buddy in enumerate(neighbor):
             logging.info(f"Processing buddy {index + 1}/{len(neighbor)}: {buddy['nick_name']} [{buddy['link']}]")

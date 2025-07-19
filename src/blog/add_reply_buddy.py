@@ -9,7 +9,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-import blog.utils as utils
+import common.webs as utils
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
@@ -44,13 +44,12 @@ def get_ollama_comment(title: str, content_: str, model: str = 'gemma3:latest') 
 
 if __name__ == '__main__':
     configuration = Configuration()
-    configuration.set_browser_headless(False)
     driver = utils.setup_firefox_profile_driver(configuration)
     try:
         driver.get(configuration.naver_blog_mobile_feed_list_url)
         driver.set_window_position(-1000, 0)
         time.sleep(random.uniform(1, 2))
-        utils.window_scroll(driver, 10, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
+        utils.window_scroll(driver, 20, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
         posts = get_posts(driver)
         posts_count = len(posts)
         for index, post in enumerate(posts):

@@ -20,8 +20,6 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-from blog import utils
-
 logging.basicConfig(level=logging.INFO)
 
 posts = [

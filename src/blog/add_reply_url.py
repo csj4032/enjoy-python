@@ -9,7 +9,7 @@ from selenium.webdriver.firefox.service import Service as FirefoxService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-import blog.utils as utils
+import common.webs as utils
 
 logging.basicConfig(level=logging.INFO)
 
@@ -31,7 +31,7 @@ def setup_driver():
 if __name__ == '__main__':
     driver = setup_driver()
     try:
-        driver.get("https://m.blog.naver.com/cafebj_geoje/223876441415?recommendCode=2&recommendTrackingCode=2")
+        driver.get("https://m.blog.naver.com/PostView.naver?blogId=91077334&logNo=223938907868&navType=by")
         category = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.blog_category"))).text.strip()
         title = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
         content = utils.get_content(driver)
