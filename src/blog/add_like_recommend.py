@@ -8,7 +8,6 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from blog import utils
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)

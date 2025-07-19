@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from blog.utils import setup_firefox_driver, window_scroll_top
+from common.webs import setup_firefox_driver, window_scroll_top
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)

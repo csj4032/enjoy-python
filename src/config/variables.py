@@ -15,6 +15,10 @@ class Variables:
         self.gemini_api_key = None
         self.gemini_model = None
         self.iphone_user_agent = None
+        self.google_trends_rss_url = None
+        self.naver_api_client_id = None
+        self.naver_api_client_secret = None
+        self.naver_api_search_blog_url = None
         self.naver_mobile_url = None
         self.naver_blog_mobile_url = None
         self.naver_blog_mobile_buddy_list_url = None
@@ -42,6 +46,10 @@ class Variables:
         self.iphone_user_agent = os.getenv('IPHONE_USER_AGENT')
         self.gemini_api_key = os.getenv('GEMINI_API_KEY')
         self.gemini_model = os.getenv('GEMINI_MODEL')
+        self.google_trends_rss_url = os.getenv('GOOGLE_TRENDS_RSS_URL', 'https://trends.google.com/trending/rss')
+        self.naver_api_client_id = os.getenv('NAVER_API_CLIENT_ID')
+        self.naver_api_client_secret = os.getenv('NAVER_API_CLIENT_SECRET')
+        self.naver_api_search_blog_url = os.getenv('NAVER_API_SEARCH_BLOG_URL')
         self.naver_mobile_url = os.getenv('NAVER_MOBILE_URL')
         self.naver_blog_mobile_url = os.getenv('NAVER_BLOG_MOBILE_URL')
         self.naver_blog_mobile_buddy_list_url = os.getenv('NAVER_BLOG_MOBILE_BUDDY_LIST_URL')
