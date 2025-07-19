@@ -4,6 +4,8 @@ import time
 from typing import List, Dict, Optional
 
 from selenium.webdriver.common.by import By
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -13,7 +15,7 @@ from config.configuration import Configuration
 logging.basicConfig(level=logging.INFO)
 
 
-def parse_post(post_element: object) -> Optional[Dict[str, str]]:
+def parse_post(post_element: WebElement) -> Optional[Dict[str, str]]:
     try:
         title = post_element.find_element(By.CSS_SELECTOR, "strong.title__UUn4H").text
         link = post_element.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute("href")
@@ -23,7 +25,7 @@ def parse_post(post_element: object) -> Optional[Dict[str, str]]:
         return None
 
 
-def get_posts(driver_: object, timeout: int = 1, selector: str = "div.card__reUkU") -> List[Dict[str, Optional[str]]]:
+def get_posts(driver_: WebDriver, timeout: int = 1, selector: str = "div.card__reUkU") -> List[Dict[str, Optional[str]]]:
     try:
         posts_ = WebDriverWait(driver_, timeout).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parse_post(post_) for post_ in posts_ if post_.is_displayed()]
