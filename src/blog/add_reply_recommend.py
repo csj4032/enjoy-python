@@ -74,10 +74,11 @@ def generate_and_write_comment_if_needed(driver_: WebDriver, post_: dict, conten
 
 if __name__ == '__main__':
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     driver = utils.setup_firefox_profile_driver(configuration)
     driver.get(configuration.naver_blog_mobile_recommendation_url)
     try:
-        utils.window_scroll_more(driver, 1, 0, 200)
+        utils.window_scroll_more(driver, 10, 0, 500, link=configuration.naver_blog_mobile_recommendation_url)
         posts = get_recommend_posts(driver)
         posts_count = len(posts)
         for index, post in enumerate(posts):

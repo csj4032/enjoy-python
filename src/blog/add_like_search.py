@@ -45,7 +45,7 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], blog_: Item, limit: 
             driver_.execute_script("arguments[0].click();", like_button)
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
             logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog_.nick_name} [{href_}]")
-        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException) as exception_:
+        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception_:
             logging.error(f"Failed to like post {index_ + 1} for {blog_.nick_name}: {exception_}")
             pass
 

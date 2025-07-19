@@ -130,6 +130,7 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
         alert = WebDriverWait(driver_, 3).until(EC.alert_is_present())
         if alert:
             logging.info(f"Alert text after posting comment: {alert.text}")
+            time.sleep(random.uniform(1, 2))
             alert.accept()
             return alert.text
         time.sleep(random.uniform(1, 2))
