@@ -17,7 +17,7 @@ logging.basicConfig(level=logging.INFO)
 __prompt = "'{0}' 이라는 제목의 블로그 글에 대한 코멘트를 하나만 간단하게 작성해줘. 아래 '{1}' 내용을 참고해서, 방문자 입장에서 담백하고 자연스럽게 작성해야 해. 코멘트는 50자 내외로 해줘"
 
 
-def parse_post(post_: WebElement) -> dict:
+def parse_post(post_: WebElement) -> dict | None:
     try:
         name = post_.find_element(By.CSS_SELECTOR, "strong.name__aDUPc").text.strip()
         title = post_.find_element(By.CSS_SELECTOR, "strong.title__UUn4H").text.strip()
@@ -28,7 +28,7 @@ def parse_post(post_: WebElement) -> dict:
     return None
 
 
-def get_posts(driver_: WebDriver, selector: str = "div.card__reUkU") -> list:
+def get_posts(driver_: WebDriver, selector: str = "div.card__reUkU") -> list[dict]:
     try:
         posts_ = WebDriverWait(driver_, 5).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parse_post(post_) for post_ in posts_ if parse_post(post_) is not None]
@@ -44,6 +44,7 @@ def get_ollama_comment(title: str, content_: str, model: str = 'gemma3:latest') 
 
 if __name__ == '__main__':
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     driver = utils.setup_firefox_profile_driver(configuration)
     try:
         driver.get(configuration.naver_blog_mobile_feed_list_url)
