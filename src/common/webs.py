@@ -134,7 +134,7 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
             logging.info(f"Alert text after posting comment: {alert.text}")
             time.sleep(random.uniform(1, 2))
             alert.accept()
-            return alert.text
+            return "Limited"
         time.sleep(random.uniform(1, 2))
     except NoSuchElementException:
         logging.error("Comment textarea not found.")

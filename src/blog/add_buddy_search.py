@@ -10,7 +10,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.search import get_mobile_naver_blog_results_by_trend
+from common.search import get_naver_mobile_blog_by_trends
 from common.webs import setup_edge_profile_driver
 from config.configuration import Configuration
 
@@ -106,7 +106,7 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
     configuration.set_browser_headless(False)
-    blogs = get_mobile_naver_blog_results_by_trend(configuration)
+    blogs = get_naver_mobile_blog_by_trends(configuration)
     driver = setup_edge_profile_driver(configuration)
     driver.set_window_position(-500, 0)
     try:

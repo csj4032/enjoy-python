@@ -11,7 +11,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.search import get_mobile_naver_blog_results_by_trend, Item
+from common.search import get_naver_mobile_blog_by_trends, Blog
 from common.webs import setup_edge_profile_driver
 from config.configuration import Configuration
 
@@ -32,7 +32,7 @@ def get_posts(driver_: WebDriver) -> List[WebElement]:
         return []
 
 
-def like_post(driver_: WebDriver, posts_: List[WebElement], blog_: Item, limit: int = 10) -> None:
+def like_post(driver_: WebDriver, posts_: List[WebElement], blog_: Blog, limit: int = 10) -> None:
     if not posts_:
         logging.warning(f"No posts found for {blog_.nick_name}.")
         return
@@ -55,7 +55,7 @@ if __name__ == '__main__':
     configuration = Configuration()
     configuration.set_browser_headless(False)
     configuration.set_naver_api_display(100)
-    blogs = get_mobile_naver_blog_results_by_trend(configuration)
+    blogs = get_naver_mobile_blog_by_trends(configuration)
     driver = setup_edge_profile_driver(configuration)
     driver.set_window_position(-500, 0)
     try:

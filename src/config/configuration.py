@@ -9,10 +9,15 @@ class Configuration:
         self.gemini_api_key = self.variables.gemini_api_key
         self.gemini_model = self.variables.gemini_model
         self.google_trends_rss_url = self.variables.google_trends_rss_url
+        self.x_api_key = self.variables.x_api_key
+        self.x_api_key_secret = self.x_api_key_secret
+        self.x_bearer_token = self.variables.x_bearer_token
+        self.x_access_token = self.variables.x_access_token
+        self.x_access_token_secret = self.variables.x_access_token_secret
         self.naver_api_client_id = self.variables.naver_api_client_id
         self.naver_api_client_secret = self.variables.naver_api_client_secret
-        self.naver_api_search_blog_url = self.variables.naver_api_search_blog_url
-        self.naver_api_display = self.variables.naver_api_display
+        self.naver_api_search_url = self.variables.naver_api_search_url
+        self.naver_api_search_display = self.variables.naver_api_search_display
         self.naver_mobile_url = self.variables.naver_mobile_url
         self.naver_blog_mobile_url = self.variables.naver_blog_mobile_url
         self.naver_blog_mobile_buddy_list_url = self.variables.naver_blog_mobile_buddy_list_url
@@ -24,7 +29,6 @@ class Configuration:
         self.naver_blog_buddy_daily_add_limit_message = self.variables.naver_blog_buddy_daily_add_limit_message
         self.naver_blog_buddy_request_pending_cancel_message = self.variables.naver_blog_buddy_request_pending_cancel_message
         self.naver_blog_buddy_user_limit_reached_message = self.variables.naver_blog_buddy_user_limit_reached_message
-
         self.browser_configuration = BrowserConfiguration(self.variables)
 
     def __getattr__(self, item):

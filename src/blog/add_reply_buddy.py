@@ -81,3 +81,5 @@ if __name__ == '__main__':
     finally:
         time.sleep(random.uniform(2, 10))
         driver.quit()
+
+
