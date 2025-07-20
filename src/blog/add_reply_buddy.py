@@ -57,13 +57,13 @@ if __name__ == '__main__':
             try:
                 logging.info(f"Processing reply {index + 1}/{posts_count} Post: {post['name']}, Title: {post['title']}, Link: {post['link']}")
                 driver.get(post['link'])
-                time.sleep(random.uniform(1, 3))
+                time.sleep(random.uniform(2, 3))
                 content = utils.get_content(driver)
                 reply_button = utils.get_reply_button(driver)
                 logging.info(f"Post: {post['name']}, Link: {post['link']}, Content length: {len(content)}, Reply button: {reply_button is not None}")
                 if content and len(content) > 1000 and reply_button:
                     driver.execute_script("arguments[0].click();", reply_button)
-                    time.sleep(random.uniform(1, 3))
+                    time.sleep(random.uniform(2, 3))
                     is_exist_mmix_reply = utils.get_mmix_reply(driver)
                     logging.info(f"Processing reply {index + 1}/{posts_count} Post: {post['name']}, Title: {post['title']} MMIX reply exists: {is_exist_mmix_reply}")
                     if not is_exist_mmix_reply:
@@ -71,13 +71,13 @@ if __name__ == '__main__':
                         logging.info(f"Processing reply {index + 1}/{len(posts)}: Visiting post '{post['title']}', Generated reply: {comment}")
                         if comment and utils.write_comment(driver, comment) == "Limited":
                             break
-                        time.sleep(random.uniform(1, 3))
+                        time.sleep(random.uniform(2, 3))
             except Exception as exception:
                 logging.error(f"Post: {post['name']}, Link: {post['link']}, Title: {post['title']} Error : {exception}")
                 pass
-            time.sleep(random.uniform(1, 2))
+            time.sleep(random.uniform(2, 2))
     except Exception as exception:
         logging.error(f"An error occurred: {exception}")
     finally:
-        time.sleep(random.uniform(1, 10))
+        time.sleep(random.uniform(2, 10))
         driver.quit()

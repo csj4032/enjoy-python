@@ -38,10 +38,10 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], blog_: Item, limit: 
         return
     for index_, post in enumerate(posts_[:random.randint(5, limit)]):
         try:
-            time.sleep(random.uniform(1, 3))
+            time.sleep(random.uniform(2, 3))
             like_button = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
             driver_.execute_script("arguments[0].scrollIntoView({block: 'center'});", like_button)
-            time.sleep(random.uniform(1, 3))
+            time.sleep(random.uniform(2, 3))
             driver_.execute_script("arguments[0].click();", like_button)
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
             logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog_.nick_name} [{href_}]")

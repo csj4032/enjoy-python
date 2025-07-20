@@ -114,7 +114,9 @@ def get_mmix_reply(driver_: WebDriver) -> bool:
         name_elements = WebDriverWait(driver_, 5).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.u_cbox_name")))
         for name in name_elements:
             href = name.get_attribute("href")
-            if 'csj4032' in parse_qs(urlparse(href).query).get('blogId', []):
+            parameter = parse_qs(urlparse(href).query).get('blogId', [])
+            logging.info(f"MMIX reply {parameter}")
+            if 'csj4032' in parameter:
                 return True
         return False
     except TimeoutException:

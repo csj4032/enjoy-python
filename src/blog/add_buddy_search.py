@@ -85,11 +85,11 @@ def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> None:
     buddy_button_radio = WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.ID, "bothBuddyRadio")))
     if buddy_button_radio.is_enabled():
         buddy_button_radio.click()
-        time.sleep(random.uniform(1, 2))
-        textarea = WebDriverWait(driver_, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, "textarea.textarea_t1")))
+        time.sleep(random.uniform(2, 3))
+        textarea = WebDriverWait(driver_, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "textarea.textarea_t1")))
         textarea.send_keys(f"안녕하세요! {blog_.nick_name}님.\n{subject_} 관련 블로그를 탐방하다가 방문하게 됐어요.\n소통하고 싶어서 서로이웃 신청합니다.\n행복한 하루 보내세요!")
-        time.sleep(random.uniform(1, 2))
-        ok_button = WebDriverWait(driver_, 2).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_ok")))
+        time.sleep(random.uniform(2, 3))
+        ok_button = WebDriverWait(driver_, 3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_ok")))
         ok_button.click()
         logging.info(f"Added buddy: {blog_.nick_name}")
     else:
