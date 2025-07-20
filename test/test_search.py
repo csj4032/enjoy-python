@@ -1,4 +1,4 @@
-from common.search import get_google_trends, get_naver_search_by_trends, get_naver_mobile_blog_by_trends
+from common.search import get_google_trends, get_naver_search_by_trends, get_naver_mobile_blog_by_trends, get_naver_news_article_by_trends
 from config.configuration import Configuration
 
 
@@ -13,20 +13,35 @@ def test_get_google_trend():
 
 def test_get_naver_news():
     configuration = Configuration()
-    configuration.set_naver_api_display(1)
-    news = get_naver_search_by_trends(configuration, "news")
-    print(news)
+    configuration.set_naver_api_search_display(100)
+    configuration.set_naver_api_search_page(2)
+    news_by_trends = get_naver_search_by_trends(configuration, "news")
+    for trend in news_by_trends:
+        for result in trend['results']:
+            for item in result.items:
+                print(f"trends: {trend['trend']} - {item.title} - {item.link} - {item.description}")
+
+
+def test_get_naver_news_article_by_trends():
+    configuration = Configuration()
+    configuration.set_naver_api_search_display(10)
+    configuration.set_naver_api_search_page(1)
+    news_contents = get_naver_news_article_by_trends(configuration)
+    for news in news_contents:
+        print(f"news: {news}")
 
 
 def test_get_naver_blog():
     configuration = Configuration()
-    configuration.set_naver_api_display(1)
+    configuration.set_naver_api_search_display(1)
     blogs = get_naver_search_by_trends(configuration, "blog")
     print(blogs)
 
 
 def test_get_naver_mobile_blog_by_trends():
     configuration = Configuration()
-    configuration.set_naver_api_display(1)
+    configuration.set_naver_api_search_display(1)
+    configuration.set_naver_api_search_page(3)
     blogs_by_trends = get_naver_mobile_blog_by_trends(configuration)
-    print(blogs_by_trends)
+    for trend in blogs_by_trends:
+        print(trend)

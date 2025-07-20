@@ -1,9 +1,14 @@
 import logging
 import random
+import time
+import re
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Optional
 from typing import Type, TypeVar, List, Dict, Any
 
+import pytz
+from newspaper import Article
 import requests
 from bs4 import BeautifulSoup
 
@@ -99,17 +104,28 @@ class News:
     title: str
     original_link: str
     link: str
+    article: str
+    top_image: str
+    images: list[str]
+    authors: list[str]
     description: str
-    pub_datetime: str
+    public_datetime: datetime
+    public_article_datetime: str
 
     @staticmethod
     def from_dict(data: Dict) -> 'News':
+        article = get_article(data.get("originallink", ""))
         return News(
             title=data.get("title", ""),
             original_link=data.get("originallink", ""),
             link=data.get("link", ""),
+            article=re.sub(r'(\n|<br\s*/?>)', '', article.text) if article and hasattr(article, "text") else "",
+            top_image=article.top_image if article else "",
+            images=article.images if article else [],
+            authors=article.authors if article else [],
             description=data.get("description", ""),
-            pub_datetime=data.get("pubDate", "")
+            public_datetime=datetime.strptime(data.get("pubDate", ""), "%a, %d %b %Y %H:%M:%S %z"),
+            public_article_datetime=article.publish_date if article else ""
         )
 
 
@@ -128,7 +144,7 @@ class NaverSearchNewsResult:
             total=data.get("total", 0),
             start=data.get("start", 0),
             display=data.get("display", 0),
-            items=[News.from_dict(item) for item in data.get("items", [])]
+            items=[News.from_dict(item) for item in data.get("items", []) if item["originallink"] != ""]
         )
         return result
 
@@ -136,16 +152,16 @@ class NaverSearchNewsResult:
 def get_google_trends(google_trends_rss_url: str, geo="KR") -> List[TrendItem]:
     response = requests.get(f"{google_trends_rss_url}?geo={geo}")
     soup = BeautifulSoup(response.content, 'xml')
-    logging.info(f"Fetched Google Trends RSS feed for geo: {geo}, total items: {len(soup.find_all('item'))}")
     return [TrendItem.from_xml(item) for item in soup.find_all('item')]
 
 
 def get_naver_api_response(query: str, url: str, client_id: str, client_secret: str, display: int = 10, start: int = 1, sort: str = "sim") -> Optional[dict]:
+    time.sleep(random.uniform(0.5, 1.5))
     try:
         response = requests.get(url, headers={"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}, params={"query": query, "display": display, "start": start, "sort": sort})
         response.raise_for_status()
         result = response.json()
-        logging.info(f"Fetched Naver API results for query: {query}, total items: {result.get('total', 0)}")
+        logging.info(f"Fetched Naver API results for query: {query}, Total items: {len(result.get('items', []))}")
         return result
     except Exception as e:
         logging.error(f"Error fetching Naver API results: {e} By query: {query}")
@@ -161,18 +177,44 @@ def get_class_type(type_: str) -> Type[T]:
         raise ValueError(f"Unknown type: {type_}")
 
 
-def get_naver_search_by_query(configuration: Configuration, type_: str, query: str, page: int = 2) -> List[T]:
+def get_article(url: str, language: str = "ko") -> Article | None:
+    try:
+        article = Article(url, language=language)
+        article.download()
+        article.parse()
+        return article
+    except Exception as exception:
+        logging.error(f"Error fetching article from {url}: {exception}")
+        return None
+
+
+def deduplicate_by_attr(items: list, attr: str) -> list:
+    seen = set()
+    return [item for item in items if (v := getattr(item, attr, None)) and not (v in seen or seen.add(v))]
+
+
+def get_naver_search_by_query(configuration: Configuration, type_: str, query: str) -> List[T]:
     url = f"{configuration.naver_api_search_url}/{type_}"
     class_ = get_class_type(type_)
     client_id = configuration.naver_api_client_id
     client_secret = configuration.naver_api_client_secret
     display = configuration.naver_api_search_display
-    return [class_.from_dict(get_naver_api_response(query, url, client_id, client_secret, display, page_no * display - (display - 1), "date")) for page_no in range(1, page)]
+    page = configuration.naver_api_search_page
+    sort = configuration.naver_api_search_sort
+    return deduplicate_by_attr([item for page_no in range(page) for item in class_.from_dict(get_naver_api_response(query, url, client_id, client_secret, display, (page_no + 1) * display - (display - 1), sort)).items], "link")
 
 
 def get_naver_search_by_trends(configuration: Configuration, type_: str) -> List[Dict[str, Any]]:
-    return [{"trend": trend.title, "results": get_naver_search_by_query(configuration, type_, trend.title)} for trend in get_google_trends(configuration.google_trends_rss_url, geo="KR")]
+    return [{"title": trend.title, "items": get_naver_search_by_query(configuration, type_, trend.title)} for trend in get_google_trends(configuration.google_trends_rss_url, geo="KR")]
+
+
+def get_naver_news_article_by_trends(configuration: Configuration) -> List[News]:
+    return [news for trend in get_naver_search_by_trends(configuration, "news") for news in trend.get("items", [])]
 
 
 def get_naver_mobile_blog_by_trends(configuration: Configuration) -> List[Blog]:
-    return [blog for trend in get_naver_search_by_trends(configuration, "blog") for result in trend.get("results", []) for blog in result.items if "m.blog.naver.com" in blog.mobile_link]
+    return [blog for trend in get_naver_search_by_trends(configuration, "blog") for blog in trend.get("items", []) if "m.blog.naver.com" in blog.mobile_link]
+
+
+def get_naver_news_by_from_to(configuration: Configuration, query: str, from_datetime: datetime, to_datetime: datetime) -> List[News]:
+    return [news for news in get_naver_search_by_query(configuration, "news", query=query) if from_datetime < news.public_datetime < to_datetime]

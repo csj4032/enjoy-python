@@ -18,6 +18,8 @@ class Configuration:
         self.naver_api_client_secret = self.variables.naver_api_client_secret
         self.naver_api_search_url = self.variables.naver_api_search_url
         self.naver_api_search_display = self.variables.naver_api_search_display
+        self.naver_api_search_page = self.variables.naver_api_search_page
+        self.naver_api_search_sort = self.variables.naver_api_search_sort
         self.naver_mobile_url = self.variables.naver_mobile_url
         self.naver_blog_mobile_url = self.variables.naver_blog_mobile_url
         self.naver_blog_mobile_buddy_list_url = self.variables.naver_blog_mobile_buddy_list_url
@@ -39,8 +41,11 @@ class Configuration:
     def set_browser_headless(self, headless: bool):
         self.browser_configuration.headless = headless
 
-    def set_naver_api_display(self, display: int):
-        self.naver_api_display = display
+    def set_naver_api_search_display(self, display: int):
+        self.naver_api_search_display = display
+
+    def set_naver_api_search_page(self, page: int):
+        self.naver_api_search_page = page
 
     def get_browser_headless(self) -> bool:
         return self.browser_configuration.headless

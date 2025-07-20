@@ -3,8 +3,6 @@ import random
 import time
 from urllib.parse import urlparse, parse_qs
 
-import google.generativeai as genai
-import requests
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
 from selenium.webdriver.common.by import By
@@ -12,11 +10,13 @@ from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.remote.webdriver import WebDriver
+from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.safari.options import Options as SafariOptions
 from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.remote.webdriver import WebDriver
+
 from config.configuration import Configuration
 
 
@@ -101,7 +101,7 @@ def get_content(driver_: WebDriver) -> str:
         return ""
 
 
-def get_reply_button(driver_: WebDriver) -> object:
+def get_reply_button(driver_: WebDriver) -> WebElement | None:
     try:
         return WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_reply")))
     except TimeoutException:
@@ -115,7 +115,6 @@ def get_mmix_reply(driver_: WebDriver) -> bool:
         for name in name_elements:
             href = name.get_attribute("href")
             parameter = parse_qs(urlparse(href).query).get('blogId', [])
-            logging.info(f"MMIX reply {parameter}")
             if 'csj4032' in parameter:
                 return True
         return False
@@ -142,15 +141,6 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
     return "Success"
 
 
-def generate_comment(prompt, model='gemma3:latest', api_key=None, generation_config=None, safety_settings=None):
-    if 'gemini' in model:
-        if not api_key:
-            raise ValueError("Gemini API key is required for Gemini models.")
-        return call_gemini_api(api_key, model, prompt, generation_config, safety_settings)
-    else:
-        return call_ollama_api(prompt, model)
-
-
 def parse_post(post_element, link_selector, name_selector, title_selector):
     try:
         link = post_element.find_element(By.CSS_SELECTOR, link_selector).get_attribute('href')
@@ -172,20 +162,3 @@ def get_posts(driver, post_selector, link_selector, name_selector, title_selecto
     except TimeoutException:
         logging.error("No posts found or timeout occurred.")
         return []
-
-
-def call_gemini_api(api_key, model_name, context_=None, generation_config=None, safety_settings=None):
-    genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model_name)
-    response = model.generate_content(contents=context_, generation_config=generation_config, safety_settings=safety_settings)
-    return response.text
-
-
-def call_ollama_api(prompt, model='gemma3:latest'):
-    url = "http://localhost:11434/api/generate"
-    payload = {"model": model, "prompt": prompt, "stream": False}
-    response = requests.post(url, json=payload)
-    if response.status_code == 200:
-        return response.json()["response"]
-    else:
-        raise Exception(f"Request failed: {response.status_code} - {response.text}")
