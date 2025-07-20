@@ -11,17 +11,10 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from blog.add_like_buddy import try_click_element
 from common.search import get_naver_mobile_blog_by_trends, Blog
 from common.webs import setup_edge_profile_driver
 from config.configuration import Configuration
-
-
-def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> None:
-    try:
-        WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
-    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as e:
-        logging.error(f"Element with selector '{selector}' not found or not clickable.")
-        pass
 
 
 def get_posts(driver_: WebDriver) -> List[WebElement]:
@@ -33,18 +26,21 @@ def get_posts(driver_: WebDriver) -> List[WebElement]:
 
 
 def like_post(driver_: WebDriver, posts_: List[WebElement], blog_: Blog, limit: int = 10) -> None:
+    if not posts_:
+        logging.warning(f"No posts found for {blog_.nick_name}.")
+        return
     for index_, post in enumerate(posts_[:random.randint(5, limit)]):
         time.sleep(random.uniform(2, 3))
         try:
             like_button = WebDriverWait(driver_, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
+            driver_.execute_script("arguments[0].scrollIntoView({block: 'center'});", like_button)
+            time.sleep(random.uniform(2, 3))
+            driver_.execute_script("arguments[0].click();", like_button)
+            href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
+            logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog_.nick_name} [{href_}]")
         except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception_:
             logging.error(f"Failed to like post {index_ + 1} for {blog_.nick_name}: {exception_}")
-            continue
-        driver_.execute_script("arguments[0].scrollIntoView({block: 'center'});", like_button)
-        time.sleep(random.uniform(2, 3))
-        driver_.execute_script("arguments[0].click();", like_button)
-        href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
-        logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog_.nick_name} [{href_}]")
+            pass
 
 
 if __name__ == '__main__':

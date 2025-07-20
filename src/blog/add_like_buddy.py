@@ -27,9 +27,9 @@ def parse_buddy(buddy_: WebElement) -> Optional[Dict[str, str]]:
         return None
 
 
-def get_neighbor(driver_: WebDriver) -> List[Dict[str, str]]:
-    buddies = driver_.find_elements(By.CSS_SELECTOR, "div.buddy_item__evaoI")
-    neighbor_ = [parsed for buddy_ in buddies if (parsed := parse_buddy(buddy_)) is not None]
+def get_buddies(driver_: WebDriver) -> List[Dict[str, str]]:
+    buddies_ = driver_.find_elements(By.CSS_SELECTOR, "div.buddy_item__evaoI")
+    neighbor_ = [parsed for buddy_ in buddies_ if (parsed := parse_buddy(buddy_)) is not None]
     logging.info(f"Found {len(neighbor_)} neighbors.")
     return random.sample(neighbor_, len(neighbor_))
 
@@ -38,7 +38,6 @@ def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> No
     try:
         WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
     except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
-        logging.error(f"Element with selector '{selector}' not found or not clickable.")
         pass
 
 
@@ -59,7 +58,10 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], buddy_: Dict[str, st
     for index_, post in enumerate(posts_[:random.randint(5, limit)]):
         try:
             time.sleep(random.uniform(2, 3))
-            driver.execute_script("arguments[0].click();", WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off"))))
+            like_button = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
+            driver_.execute_script("arguments[0].scrollIntoView({block: 'center'});", like_button)
+            time.sleep(random.uniform(2, 3))
+            driver_.execute_script("arguments[0].click();", like_button)
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
             logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {buddy_['nick_name']} [{href_}]")
         except Exception as exception:
@@ -79,9 +81,9 @@ if __name__ == '__main__':
         you_add_to_click.click()
         time.sleep(random.uniform(1, 2))
         window_scroll(driver, 200, 0, 500, 0, 1, configuration.naver_blog_mobile_buddy_list_url)
-        neighbor = get_neighbor(driver)
-        for index, buddy in enumerate(neighbor):
-            logging.info(f"Processing buddy {index + 1}/{len(neighbor)}: {buddy['nick_name']} [{buddy['link']}]")
+        buddies = get_buddies(driver)
+        for index, buddy in enumerate(buddies):
+            logging.info(f"Processing buddy {index + 1}/{len(buddies)}: {buddy['nick_name']} [{buddy['link']}]")
             driver.get(buddy['link'])
             time.sleep(random.uniform(1, 2))
             try_click_element(driver, "button[data-click-area='ltb.post']")
