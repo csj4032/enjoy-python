@@ -50,7 +50,6 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], blog_: Blog, limit: 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
-    configuration.set_browser_headless(False)
     configuration.set_naver_api_search_display(100)
     blogs = get_naver_mobile_blog_by_trends(configuration)
     driver = setup_edge_profile_driver(configuration)

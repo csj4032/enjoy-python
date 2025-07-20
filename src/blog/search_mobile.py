@@ -80,7 +80,6 @@ def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, ma
 
 if __name__ == '__main__':
     configuration = Configuration()
-    configuration.set_browser_headless(False)
     shuffle_posts = random.sample(posts, len(posts))
     for post in shuffle_posts:
         keyword = random.choice(post["keywords"])

@@ -58,7 +58,7 @@ if __name__ == '__main__':
         driver.get(configuration.naver_blog_mobile_feed_list_url)
         driver.set_window_position(-1000, 0)
         time.sleep(random.uniform(1, 2))
-        window_scroll(driver, 50, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
+        window_scroll(driver, 10, 0, 500, scroll_random_start_time=0, scroll_random_end_time=1, link=configuration.naver_blog_mobile_feed_list_url)
         posts = get_posts(driver)
         for index, post in enumerate(posts):
             try:
@@ -75,8 +75,8 @@ if __name__ == '__main__':
                         comment = get_ollama_comment(post['title'], content[:3000])
                         if is_limited_comment(driver, comment):
                             break
-                        time.sleep(random.uniform(2, 3))
-            except Exception as exception:
+                        logging.info(f"Success reply {index + 1}/{len(posts)} Post: {post['name']}, Title: {post['title']}, Link: {post['link']}")
+            except TimeoutException as exception:
                 logging.error(f"Post: {post['name']}, Link: {post['link']}, Title: {post['title']} Error : {exception}")
                 pass
             time.sleep(random.uniform(2, 5))

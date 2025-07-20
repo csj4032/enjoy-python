@@ -3,7 +3,7 @@ import random
 import time
 from typing import List, Dict, Optional
 
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
@@ -11,10 +11,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.webs import setup_firefox_profile_driver, window_scroll, setup_edge_profile_driver
+from common.webs import window_scroll, setup_edge_profile_driver
 from config.configuration import Configuration
-
-logging.basicConfig(level=logging.INFO)
 
 
 def parse_buddy(buddy_: WebElement) -> Optional[Dict[str, str]]:
@@ -22,9 +20,9 @@ def parse_buddy(buddy_: WebElement) -> Optional[Dict[str, str]]:
         blog_name = buddy_.find_element(By.CSS_SELECTOR, "div.desc__mzlZG").text.strip()
         nick_name = buddy_.find_element(By.CSS_SELECTOR, "strong.name__jKV9Z").text.strip()
         link = buddy_.find_element(By.CSS_SELECTOR, "a.link__vh8uU").get_attribute('href')
-        status = buddy_.find_element(By.CSS_SELECTOR, "button.btn__pqYzr").text.strip()
+        status = buddy_.find_element(By.CSS_SELECTOR, "button[data-click-area='ngr.change']").text.strip()
         return {"blog_name": blog_name, "nick_name": nick_name, "link": link, "status": status}
-    except NoSuchElementException as exception:
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception:
         logging.error(f"Failed to parse buddy element. {exception}")
         return None
 
@@ -39,7 +37,7 @@ def get_neighbor(driver_: WebDriver) -> List[Dict[str, str]]:
 def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> None:
     try:
         WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
-    except TimeoutException:
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
         logging.error(f"Element with selector '{selector}' not found or not clickable.")
         pass
 
@@ -49,7 +47,7 @@ def get_posts(driver_: WebDriver) -> List[WebElement]:
         posts_ = WebDriverWait(driver_, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.card__reUkU")))
         logging.info(f"Found {len(posts_)} posts.")
         return posts_
-    except TimeoutException:
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
         logging.error("Timeout while trying to find posts.")
         return []
 
@@ -70,6 +68,7 @@ def like_post(driver_: WebDriver, posts_: List[WebElement], buddy_: Dict[str, st
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
     configuration.set_browser_headless(False)
     driver = setup_edge_profile_driver(configuration)

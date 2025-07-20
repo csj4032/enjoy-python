@@ -109,7 +109,7 @@ def get_reply_button(driver_: WebDriver) -> WebElement | None:
         return None
 
 
-def get_mmix_reply(driver_: WebDriver) -> bool:
+def get_mmix_reply(driver_: WebDriver) -> bool | None:
     try:
         name_elements = WebDriverWait(driver_, 5).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.u_cbox_name")))
         for name in name_elements:
@@ -119,8 +119,7 @@ def get_mmix_reply(driver_: WebDriver) -> bool:
                 return True
         return False
     except TimeoutException:
-        logging.error("MMIX reply textarea not found or timeout occurred.")
-        return False
+        pass
 
 
 def write_comment(driver_: WebDriver, comment_: str) -> str:
@@ -128,16 +127,19 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
         driver_.find_element(By.ID, "naverComment__write_textarea").send_keys(comment_)
         time.sleep(random.uniform(1, 2))
         driver_.find_element(By.CSS_SELECTOR, "button.u_cbox_btn_upload").click()
-        alert = WebDriverWait(driver_, 3).until(EC.alert_is_present())
-        if alert:
-            logging.info(f"Alert text after posting comment: {alert.text}")
-            time.sleep(random.uniform(1, 2))
-            alert.accept()
-            return "Limited"
         time.sleep(random.uniform(1, 2))
-    except NoSuchElementException:
+        try:
+            alert = WebDriverWait(driver_, 3).until(EC.alert_is_present())
+            if alert:
+                logging.info(f"Alert text after posting comment: {alert.text}")
+                time.sleep(random.uniform(1, 2))
+                alert.accept()
+                return "Limited"
+        except TimeoutException:
+            pass
+    except (TimeoutException, NoSuchElementException):
         logging.error("Comment textarea not found.")
-        return "Error"
+        pass
     return "Success"
 
 
