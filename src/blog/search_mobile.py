@@ -110,5 +110,5 @@ if __name__ == '__main__':
         except Exception as exception:
             logging.info(f"An error occurred: {exception}")
         finally:
-            time.sleep(random.uniform(1, 5))
+            time.sleep(random.uniform(10, 15))
             driver.quit()

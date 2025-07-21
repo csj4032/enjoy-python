@@ -1,10 +1,11 @@
 import logging
 import random
 import time
+from typing import Optional, Dict
 from urllib.parse import urlparse, parse_qs
 
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchElementException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
@@ -17,6 +18,7 @@ from selenium.webdriver.safari.service import Service as SafariService
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from common.llm import call_ollama_api
 from config.configuration import Configuration
 
 
@@ -124,26 +126,82 @@ def get_mmix_reply(driver_: WebDriver) -> bool | None:
 
 def write_comment(driver_: WebDriver, comment_: str) -> str:
     try:
+        time.sleep(random.uniform(1, 2))
         driver_.find_element(By.ID, "naverComment__write_textarea").send_keys(comment_)
         time.sleep(random.uniform(1, 2))
         driver_.find_element(By.CSS_SELECTOR, "button.u_cbox_btn_upload").click()
         time.sleep(random.uniform(1, 2))
         try:
-            alert = WebDriverWait(driver_, 3).until(EC.alert_is_present())
+            alert = WebDriverWait(driver_, 5).until(EC.alert_is_present())
             if alert:
                 logging.info(f"Alert text after posting comment: {alert.text}")
                 time.sleep(random.uniform(1, 2))
                 alert.accept()
                 return "Limited"
-        except TimeoutException:
+        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
             pass
-    except (TimeoutException, NoSuchElementException):
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
         logging.error("Comment textarea not found.")
-        pass
+        return "Failed"
     return "Success"
 
 
-def parse_post(post_element, link_selector, name_selector, title_selector):
+def get_ollama_comment(prompt, title: str, content_: str, model: str = 'gemma3:latest') -> str:
+    response = call_ollama_api(prompt.format(title, content_), model=model)
+    return response.strip() if response else ""
+
+
+def is_valid_post(content_: str, reply_button_: WebElement) -> bool:
+    return bool(content_) and len(content_) > 1000 and reply_button_ is not None
+
+
+def is_limited_comment(driver_: WebDriver, comment_: str) -> bool:
+    return write_comment(driver_, comment_) == "Limited"
+
+
+def process_reply_and_is_limited(driver_: WebDriver, post_: dict, prompt: str, model='gemma3:latest') -> bool:
+    content = get_content(driver_)
+    reply_button = get_reply_button(driver_)
+    if is_valid_post(content, reply_button):
+        driver_.execute_script("arguments[0].click();", reply_button)
+        time.sleep(random.uniform(2, 3))
+        is_exist_mmix_reply = get_mmix_reply(driver_)
+        if not is_exist_mmix_reply:
+            comment = get_ollama_comment(prompt, post_['title'], content[:3000], model=model)
+            if is_limited_comment(driver_, comment):
+                return True
+    return False
+
+
+def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> None:
+    try:
+        WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
+        pass
+
+
+def move_to_buddy_added_scroll(driver_: WebDriver, configuration_: Configuration, range_=200, x_coord=0, y_coord=500, scroll_randon_start_time=0, scroll_randon_end_time=1, selector="button[data-click-area='ngr.youadd']") -> None:
+    logging.info(f"Navigating to {configuration_.naver_blog_mobile_buddy_list_url} to move to buddy added scroll.")
+    driver_.get(configuration_.naver_blog_mobile_buddy_list_url)
+    you_add_to_click = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+    you_add_to_click.click()
+    time.sleep(random.uniform(1, 2))
+    window_scroll(driver_, range_, x_coord, y_coord, scroll_randon_start_time, scroll_randon_end_time, configuration_.naver_blog_mobile_buddy_list_url)
+
+
+def parse_buddy_by_added(buddy_: WebElement) -> dict[str, str] | None:
+    try:
+        blog_name = buddy_.find_element(By.CSS_SELECTOR, "div.desc__mzlZG").text.strip()
+        nick_name = buddy_.find_element(By.CSS_SELECTOR, "strong.name__jKV9Z").text.strip()
+        link = buddy_.find_element(By.CSS_SELECTOR, "a.link__vh8uU").get_attribute('href')
+        status = buddy_.find_element(By.CSS_SELECTOR, "button[data-click-area='ngr.change']").text.strip()
+        return {"blog_name": blog_name, "nick_name": nick_name, "link": link, "status": status}
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception:
+        logging.error(f"Failed to parse buddy element. {exception}")
+        return None
+
+
+def parse_post(post_element: WebElement, link_selector: str, name_selector: str, title_selector: str) -> dict[str, str] | None:
     try:
         link = post_element.find_element(By.CSS_SELECTOR, link_selector).get_attribute('href')
         name = post_element.find_element(By.CSS_SELECTOR, name_selector).text
@@ -156,10 +214,7 @@ def parse_post(post_element, link_selector, name_selector, title_selector):
 
 def get_posts(driver, post_selector, link_selector, name_selector, title_selector):
     try:
-        post_elements = WebDriverWait(driver, 10).until(
-            EC.presence_of_all_elements_located((By.CSS_SELECTOR, post_selector))
-        )
-        logging.info(f"Found {len(post_elements)} posts.")
+        post_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, post_selector)))
         return [parsed for post in post_elements if (parsed := parse_post(post, link_selector, name_selector, title_selector)) is not None]
     except TimeoutException:
         logging.error("No posts found or timeout occurred.")
