@@ -43,7 +43,6 @@ def parse_post(post_: object) -> dict:
 def get_recommend_posts(driver_: object) -> list:
     try:
         posts_elements = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.postlist__qxOgF")))
-        logging.info(f"Found {len(posts_elements)} posts.")
         return [parsed for post_ in posts_elements if (parsed := parse_post(post_)) is not None]
     except TimeoutException:
         logging.error("No posts found or timeout occurred.")
