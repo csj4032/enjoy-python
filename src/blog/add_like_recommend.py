@@ -5,7 +5,7 @@ import time
 from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from common.webs import window_scroll_more, setup_firefox_profile_driver
@@ -25,7 +25,7 @@ def parse_post(post_):
 
 def get_recommend_posts(driver_, selector):
     try:
-        posts_ = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
+        posts_ = WebDriverWait(driver_, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parsed for post_ in posts_ if (parsed := parse_post(post_)) is not None]
     except TimeoutException as exception_:
         logging.warning(f"Timeout while trying to find elements: {exception_}")
@@ -34,7 +34,7 @@ def get_recommend_posts(driver_, selector):
 
 def get_like_button(driver_, selector="a.u_likeit_list_btn._button.off"):
     try:
-        return WebDriverWait(driver_, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, selector)))
+        return WebDriverWait(driver_, 2).until(ec.presence_of_element_located((By.CSS_SELECTOR, selector)))
     except TimeoutException as exception_:
         logging.warning(f"Like button not found or not clickable: {exception_}")
     return None

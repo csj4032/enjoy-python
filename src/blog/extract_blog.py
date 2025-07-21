@@ -6,7 +6,7 @@ from typing import List, Dict, Optional
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from common.webs import setup_firefox_driver, window_scroll_top
@@ -27,7 +27,7 @@ def parse_post(post_element: WebElement) -> Optional[Dict[str, str]]:
 
 def get_posts(driver_: WebDriver, timeout: int = 1, selector: str = "div.card__reUkU") -> List[Dict[str, Optional[str]]]:
     try:
-        posts_ = WebDriverWait(driver_, timeout).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
+        posts_ = WebDriverWait(driver_, timeout).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parse_post(post_) for post_ in posts_ if post_.is_displayed()]
     except Exception as e:
         logging.error(f"Error while fetching posts: {e}")

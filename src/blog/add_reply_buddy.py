@@ -6,7 +6,7 @@ from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from common.webs import setup_firefox_profile_driver, window_scroll, process_reply_and_is_limited
@@ -28,7 +28,7 @@ def parse_post(post_: WebElement) -> dict | None:
 
 def get_posts(driver_: WebDriver, selector: str = "div.card__reUkU") -> list[dict]:
     try:
-        posts_ = WebDriverWait(driver_, 5).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
+        posts_ = WebDriverWait(driver_, 5).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parse_post(post_) for post_ in posts_ if parse_post(post_) is not None]
     except TimeoutException as exception_:
         logging.error(f"Error while getting feeds: {exception_}")

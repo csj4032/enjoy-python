@@ -14,10 +14,11 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.safari.options import Options as SafariOptions
 from selenium.webdriver.safari.service import Service as SafariService
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from common.llm import call_ollama_api
+from common.search import Blog
 from config.configuration import Configuration
 
 
@@ -73,7 +74,7 @@ def window_scroll_more(driver_: WebDriver, range_, x_coord, y_coord, selector="b
         logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         try:
-            more_button = WebDriverWait(driver_, 1).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            more_button = WebDriverWait(driver_, 1).until(ec.element_to_be_clickable((By.CSS_SELECTOR, selector)))
             more_button.click()
             logging.info(f"Clicked more button {index + 1}/{range_} times. link : {link}")
             time.sleep(random.uniform(scroll_random_start_time, scroll_random_end_time))
@@ -86,7 +87,7 @@ def window_scroll_top(driver_: WebDriver, range_, x_coord, y_coord, selector="bu
         logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         try:
-            top_button = WebDriverWait(driver_, 0.5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+            top_button = WebDriverWait(driver_, 0.5).until(ec.element_to_be_clickable((By.CSS_SELECTOR, selector)))
             if top_button is not None:
                 break
         except TimeoutException:
@@ -95,7 +96,7 @@ def window_scroll_top(driver_: WebDriver, range_, x_coord, y_coord, selector="bu
 
 def get_content(driver_: WebDriver) -> str:
     try:
-        content_elements = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "p.se-text-paragraph")))
+        content_elements = WebDriverWait(driver_, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, "p.se-text-paragraph")))
         return " ".join([element.text for element in content_elements])
     except TimeoutException:
         logging.error("Content element not found or timeout occurred.")
@@ -104,7 +105,7 @@ def get_content(driver_: WebDriver) -> str:
 
 def get_reply_button(driver_: WebDriver) -> WebElement | None:
     try:
-        return WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_reply")))
+        return WebDriverWait(driver_, 5).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_reply")))
     except TimeoutException:
         logging.error("Reply content not found or timeout occurred.")
         return None
@@ -112,7 +113,7 @@ def get_reply_button(driver_: WebDriver) -> WebElement | None:
 
 def get_mmix_reply(driver_: WebDriver) -> bool | None:
     try:
-        name_elements = WebDriverWait(driver_, 5).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "a.u_cbox_name")))
+        name_elements = WebDriverWait(driver_, 5).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, "a.u_cbox_name")))
         for name in name_elements:
             href = name.get_attribute("href")
             parameter = parse_qs(urlparse(href).query).get('blogId', [])
@@ -131,7 +132,7 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
         driver_.find_element(By.CSS_SELECTOR, "button.u_cbox_btn_upload").click()
         time.sleep(random.uniform(1, 2))
         try:
-            alert = WebDriverWait(driver_, 5).until(EC.alert_is_present())
+            alert = WebDriverWait(driver_, 5).until(ec.alert_is_present())
             if alert:
                 logging.info(f"Alert text after posting comment: {alert.text}")
                 time.sleep(random.uniform(1, 2))
@@ -175,7 +176,7 @@ def process_reply_and_is_limited(driver_: WebDriver, post_: dict[str, str], prom
 
 def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> None:
     try:
-        WebDriverWait(driver_, timeout).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
+        WebDriverWait(driver_, timeout).until(ec.element_to_be_clickable((By.CSS_SELECTOR, selector))).click()
     except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
         pass
 
@@ -183,7 +184,7 @@ def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> No
 def move_to_buddy_added_scroll(driver_: WebDriver, configuration_: Configuration, range_=200, x_coord=0, y_coord=500, scroll_randon_start_time=0, scroll_randon_end_time=1, selector="button[data-click-area='ngr.youadd']") -> None:
     logging.info(f"Navigating to {configuration_.naver_blog_mobile_buddy_list_url} to move to buddy added scroll.")
     driver_.get(configuration_.naver_blog_mobile_buddy_list_url)
-    you_add_to_click = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, selector)))
+    you_add_to_click = WebDriverWait(driver_, 5).until(ec.element_to_be_clickable((By.CSS_SELECTOR, selector)))
     you_add_to_click.click()
     time.sleep(random.uniform(1, 2))
     window_scroll(driver_, range_, x_coord, y_coord, scroll_randon_start_time, scroll_randon_end_time, configuration_.naver_blog_mobile_buddy_list_url)
@@ -220,25 +221,25 @@ def parse_post(post_element: WebElement, link_selector: str, name_selector: str,
 
 def get_posts(driver, post_selector, link_selector, name_selector, title_selector):
     try:
-        post_elements = WebDriverWait(driver, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, post_selector)))
+        post_elements = WebDriverWait(driver, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, post_selector)))
         return [parsed for post in post_elements if (parsed := parse_post(post, link_selector, name_selector, title_selector)) is not None]
     except TimeoutException:
         logging.error("No posts found or timeout occurred.")
         return []
 
 
-def like_post(driver_: WebDriver, posts_: list[WebElement], buddy_: dict[str, str], limit: int = 10) -> None:
+def like_post(driver_: WebDriver, posts_: list[WebElement], blog: Blog, limit: int = 10) -> None:
     if not posts_:
-        logging.warning(f"No posts found for {buddy_['nick_name']}.")
+        logging.warning(f"No posts found for {blog.nick_name}.")
         return
     for index_, post in enumerate(posts_[:random.randint(5, limit)]):
         try:
             time.sleep(random.uniform(2, 3))
-            like_button = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
+            like_button = WebDriverWait(driver_, 5).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
             driver_.execute_script("arguments[0].scrollIntoView({block: 'center'});", like_button)
             time.sleep(random.uniform(2, 3))
             driver_.execute_script("arguments[0].click();", like_button)
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
-            logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {buddy_['nick_name']} [{href_}]")
-        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception_:
+            logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog.nick_name} [{href_}]")
+        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
             pass

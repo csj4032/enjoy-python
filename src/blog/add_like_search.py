@@ -3,23 +3,22 @@ import random
 import time
 from typing import List
 
-from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from blog.add_like_buddy_added import try_click_element
-from common.search import get_naver_mobile_blog_by_trends, Blog
+from common.search import get_naver_mobile_blog_by_trends
 from common.webs import setup_edge_profile_driver, like_post
 from config.configuration import Configuration
 
 
 def get_posts(driver_: WebDriver) -> List[WebElement]:
     try:
-        return WebDriverWait(driver_, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.card__reUkU")))
+        return WebDriverWait(driver_, 3).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, "div.card__reUkU")))
     except TimeoutException:
         logging.error("Timeout while trying to find posts.")
         return []

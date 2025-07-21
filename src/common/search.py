@@ -212,7 +212,7 @@ def get_naver_news_article_by_trends(configuration: Configuration) -> List[News]
     return [news for trend in get_naver_search_by_trends(configuration, "news") for news in trend.get("items", [])]
 
 
-def get_naver_mobile_blog_by_trends(configuration: Configuration) -> List[Blog]:
+def get_naver_mobile_blog_by_trends(configuration: Configuration) -> list[Blog]:
     return [blog for trend in get_naver_search_by_trends(configuration, "blog") for blog in trend.get("items", []) if "m.blog.naver.com" in blog.mobile_link]
 
 

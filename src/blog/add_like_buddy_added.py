@@ -1,7 +1,6 @@
 import logging
 import random
 import time
-from typing import List, Dict
 
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.common.exceptions import TimeoutException
@@ -11,11 +10,12 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
+from common.search import Blog
 from common.webs import setup_edge_profile_driver, move_to_buddy_added_scroll, try_click_element, get_buddies_by_added, like_post
 from config.configuration import Configuration
 
 
-def get_posts(driver_: WebDriver) -> List[WebElement]:
+def get_posts(driver_: WebDriver) -> list[WebElement]:
     try:
         posts_ = WebDriverWait(driver_, 3).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.card__reUkU")))
         return posts_
@@ -39,7 +39,7 @@ if __name__ == '__main__':
                 try_click_element(driver, "button[data-click-area='ltb.post']")
                 time.sleep(random.uniform(1, 2))
                 try_click_element(driver, "button[data-click-area='pls.card']")
-                like_post(driver, get_posts(driver), buddy)
+                like_post(driver, get_posts(driver), Blog(nick_name=buddy['nick_name'], mobile_link=buddy['link']))
                 time.sleep(random.uniform(1, 2))
             except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception:
                 logging.error(f"Error processing buddy {buddy['nick_name']}: {exception}")

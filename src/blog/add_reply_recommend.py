@@ -9,10 +9,11 @@ from selenium.webdriver.firefox.options import Options
 from selenium.webdriver.firefox.service import Service
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 import common.webs as utils
+from common.llm import call_gemini_api
 from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
@@ -45,7 +46,7 @@ def parse_post(post_: WebElement) -> Optional[dict]:
 
 def get_recommend_posts(driver_: WebDriver) -> list:
     try:
-        posts_elements = WebDriverWait(driver_, 10).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, "div.postlist__qxOgF")))
+        posts_elements = WebDriverWait(driver_, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, "div.postlist__qxOgF")))
         return [parsed for post_ in posts_elements if (parsed := parse_post(post_)) is not None]
     except TimeoutException:
         logging.error("No posts found or timeout occurred.")
@@ -53,7 +54,7 @@ def get_recommend_posts(driver_: WebDriver) -> list:
 
 
 def get_gemini_comment(gemini_api_key: str, gemini_model: str, title: str, content_: str) -> str:
-    response = utils.call_gemini_api(gemini_api_key, gemini_model, __prompt.format(title, content_), __generation_config)
+    response = call_gemini_api(gemini_api_key, gemini_model, __prompt.format(title, content_), __generation_config)
     return response.strip() if response else ""
 
 

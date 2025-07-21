@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 from common.webs import setup_firefox_driver, window_scroll
@@ -66,7 +66,7 @@ posts = [
 def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, match_element: str = "", timeout_: int = 5) -> Optional[WebElement]:
     logging.info(f"Searching for '{keyword_}' in  {selector_},[{match_element}] with link: {link_}")
     try:
-        title_elements = WebDriverWait(driver_, timeout_).until(EC.presence_of_all_elements_located((By.CSS_SELECTOR, selector_)))
+        title_elements = WebDriverWait(driver_, timeout_).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector_)))
         for element_ in title_elements:
             href_ = element_.get_attribute("href")
             if href_ == link_:
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             driver.set_window_position(0, 0)
             driver.get(configuration.naver_mobile_url)
             time.sleep(random.uniform(1, 2))
-            search_box = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "query")))
+            search_box = WebDriverWait(driver, 1).until(ec.presence_of_element_located((By.ID, "query")))
             search_box.send_keys(random.choice(post["keywords"]))
             search_box.send_keys(Keys.RETURN)
             matched_element = get_search(driver, link, keyword, "a.aEO4VwHkswcCgUXjRh6w.Lznm151o9qLNLUldttoM", "검색 최상단 영역")
@@ -98,7 +98,7 @@ if __name__ == '__main__':
                 matched_element = get_search(driver, link, keyword, "a.title_link", "인기글 영역")
             time.sleep(random.uniform(1, 3))
             if matched_element is None:
-                WebDriverWait(driver, 5).until(EC.element_to_be_clickable((By.LINK_TEXT, "블로그"))).click()
+                WebDriverWait(driver, 5).until(ec.element_to_be_clickable((By.LINK_TEXT, "블로그"))).click()
                 logging.info(f"Clicked on '블로그' link to search in blog section.")
                 matched_element = get_search(driver, link, keyword, "a.dsc_link", "블로그 영역")
             time.sleep(random.uniform(2, 2))

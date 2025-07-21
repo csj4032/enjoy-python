@@ -6,7 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 import common.webs as utils
@@ -32,8 +32,8 @@ if __name__ == '__main__':
     driver = setup_driver()
     try:
         driver.get("https://m.blog.naver.com/PostView.naver?blogId=91077334&logNo=223938907868&navType=by")
-        category = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.blog_category"))).text.strip()
-        title = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
+        category = WebDriverWait(driver, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.blog_category"))).text.strip()
+        title = WebDriverWait(driver, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
         content = utils.get_content(driver)
         comment = get_ollama_comment(title, category, content)
         logging.info(f"Generated comment: {comment}")

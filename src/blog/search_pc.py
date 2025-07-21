@@ -1,7 +1,6 @@
 import logging
 import random
 import time
-from typing import Optional
 
 from selenium import webdriver
 from selenium.common import NoSuchElementException
@@ -17,7 +16,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.safari.options import Options as SafariOptions
 from selenium.webdriver.safari.service import Service as SafariService
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -113,7 +112,7 @@ if __name__ == '__main__':
             driver.set_window_size(1280, 1800)
             driver.set_window_position(-1280, 0)
             driver.get("https://www.naver.com")
-            search_box = WebDriverWait(driver, 1).until(EC.presence_of_element_located((By.ID, "query")))
+            search_box = WebDriverWait(driver, 1).until(ec.presence_of_element_located((By.ID, "query")))
             search_box.send_keys(random.choice(post["keywords"]))
             search_box.send_keys(Keys.RETURN)
             time.sleep(random.uniform(1, 3))
@@ -124,7 +123,7 @@ if __name__ == '__main__':
                 matched_element = get_search_top(driver, link, keyword, "a.title_link", "검색 인기글 매치")
 
             if matched_element is None:
-                blog_tab = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.LINK_TEXT, "블로그")))
+                blog_tab = WebDriverWait(driver, 5).until(ec.presence_of_element_located((By.LINK_TEXT, "블로그")))
                 blog_tab.click()
                 time.sleep(random.uniform(1, 3))
                 blog_elements = driver.find_elements(By.CSS_SELECTOR, "a.title_link")
@@ -141,11 +140,11 @@ if __name__ == '__main__':
 
             if matched_element is not None:
                 start_time = time.time()
-                WebDriverWait(driver, 5).until(EC.element_to_be_clickable(matched_element)).click()
+                WebDriverWait(driver, 5).until(ec.element_to_be_clickable(matched_element)).click()
                 time.sleep(random.uniform(1, 10))
-                WebDriverWait(driver, 5).until(EC.number_of_windows_to_be(2))
+                WebDriverWait(driver, 5).until(ec.number_of_windows_to_be(2))
                 driver.switch_to.window(driver.window_handles[1])
-                main_iframe = WebDriverWait(driver, 5).until(EC.presence_of_element_located((By.ID, "mainFrame")))
+                main_iframe = WebDriverWait(driver, 5).until(ec.presence_of_element_located((By.ID, "mainFrame")))
                 driver.switch_to.frame(main_iframe)
                 time.sleep(random.uniform(1, 10))
                 logging.info(f"Successfully navigated to {keyword} post: {link}")
