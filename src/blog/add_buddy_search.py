@@ -73,8 +73,6 @@ def is_buddy_condition_met(subject_: str, buddy_count_: int, today_count: int, t
     return bool(subject_) and buddy_count_ >= 100 and today_count >= 10 and total_count >= 10000
 
 
-# lyr_cont lyr_alert
-# btn_100 green
 def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> str:
     buddy_button_radio = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.ID, "bothBuddyRadio")))
     if buddy_button_radio.is_enabled():
