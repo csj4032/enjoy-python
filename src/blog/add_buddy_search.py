@@ -4,7 +4,7 @@ import re
 import time
 from typing import Tuple
 
-from selenium.common import TimeoutException
+from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
@@ -50,28 +50,22 @@ def get_subject(driver_: WebDriver) -> str:
 
 def handle_buddy_popup(driver_, blog_, configuration_):
     try:
-        desc_text = WebDriverWait(driver_, 1).until(
-            ec.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl"))
-        ).text.strip()
-        logging.info(f"Popup description text: {desc_text}")
+        desc_text = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "p.desc__QgoUl"))).text.strip()
+        logging.info(f"Popup description text: {desc_text.strip()}")
         if desc_text == configuration_.naver_blog_buddy_daily_add_limit_message:
             logging.info("Daily buddy limit reached, skipping further additions.")
-            WebDriverWait(driver_, 1).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
-            return "break"
-        if desc_text == "그룹이 꽉참":
-            logging.info(f"{blog_.nick_name} has too many buddies, skipping.")
-            WebDriverWait(driver_, 1).until(ec.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
-            return "break"
+            WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
+            return "Break"
         if desc_text in ("서로이웃 신청 진행중입니다. 서로이웃\n신청을 취소하시겠습니까?", "서로이웃 신청 진행중입니다. 서로이웃신청을 취소하시겠습니까?"):
             logging.info(f"Already a buddy with {blog_.nick_name}, skipping.")
-            WebDriverWait(driver_, 1).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
-            return "continue"
+            WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "button.btn__mjgk7"))).click()
+            return "Continue"
         if desc_text == "상대방의 이웃수가 5,000명이 초과되어 더 이상 이웃을 추가할 수 없습니다.":
             logging.info(f"{blog.nick_name} has too many buddies, skipping.")
-            WebDriverWait(driver_, 1).until(ec.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
-            return "continue"
-    except TimeoutException:
-        logging.info(f"No alert for buddy: {blog_.nick_name}")
+            WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
+            return "Continue"
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
+        pass
     return None
 
 
@@ -79,7 +73,9 @@ def is_buddy_condition_met(subject_: str, buddy_count_: int, today_count: int, t
     return bool(subject_) and buddy_count_ >= 100 and today_count >= 10 and total_count >= 10000
 
 
-def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> None:
+# lyr_cont lyr_alert
+# btn_100 green
+def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> str:
     buddy_button_radio = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.ID, "bothBuddyRadio")))
     if buddy_button_radio.is_enabled():
         buddy_button_radio.click()
@@ -89,11 +85,21 @@ def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> None:
         time.sleep(random.uniform(2, 3))
         ok_button = WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_ok")))
         ok_button.click()
-        logging.info(f"Added buddy: {blog_.nick_name}")
+        time.sleep(random.uniform(2, 3))
+        try:
+            desc_text = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "p.dsc")))
+            if desc_text.text.strip() == "선택 그룹의 이웃수가 초과되어 이웃을 추가할 수 없습니다 다른 그룹을 선택해주세요":
+                logging.info(f"Select group buddy limit exceeded for {blog_.nick_name}, skipping.")
+                WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
+                return "Break"
+        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
+            logging.error("Failed to find the alert layer or it was not clickable.")
+            return "Success"
     else:
         logging.info(f"Buddy button for {blog_.nick_name} is not enabled, skipping.")
         close_button = WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_close")))
         close_button.click()
+    return "Skipped"
 
 
 def click_buddy_add_button(driver_: WebDriver) -> None:
@@ -103,12 +109,13 @@ def click_buddy_add_button(driver_: WebDriver) -> None:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     blogs = get_naver_mobile_blog_by_trends(configuration)
     driver = setup_edge_profile_driver(configuration)
     driver.set_window_position(-500, 0)
     try:
-        for index, blog in enumerate(blogs):
-            logging.info(f"Processing {index + 1}/{len(blogs)}: {blog.nick_name}")
+        for index, blog in enumerate(random.sample(blogs, len(blogs))):
+            logging.info(f"Processing {index + 1}/{len(blogs)}: {blog.nick_name}, {blog.mobile_link}")
             time.sleep(random.uniform(2, 3))
             driver.get(blog.mobile_link)
             try:
@@ -122,11 +129,14 @@ if __name__ == '__main__':
                 click_buddy_add_button(driver)
                 time.sleep(random.uniform(1, 3))
                 result = handle_buddy_popup(driver, blog, configuration)
-                if result == "break":
+                if result == "Break":
                     break
-                elif result == "continue":
+                elif result == "Continue":
                     continue
-                add_buddy_process(driver, blog, subject)
+                time.sleep(random.uniform(1, 3))
+                add_result = add_buddy_process(driver, blog, subject)
+                if add_result == "Break":
+                    break
             except TimeoutException:
                 logging.warning(f"Buddy add button not found for {blog.nick_name}, skipping.")
                 pass

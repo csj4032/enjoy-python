@@ -66,6 +66,8 @@ posts = [
     {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://blog.naver.com/csj4032/223936360808"},
     {"keywords": ["파이썬 Virtual Environment", "파이썬 Virtual", "파이썬 가상환경"], "link": "https://blog.naver.com/csj4032/223938902715"},
     {"keywords": ["파이썬 PIP 패키지 관리자", "파이썬 PIP", "파이썬 패키지 관리자"], "link": "https://blog.naver.com/csj4032/223939569798"},
+    {"keywords": ["가영이네", "가영이네 떡볶이", "어서와용"], "link": "https://blog.naver.com/csj4032/223939709220"},
+    {"keywords": ["Jupyter Lab 설치 및 사용 가이드", "Jupyter Lab 설치", "Jupyter Lab 사용 가이드"], "link": "https://blog.naver.com/csj4032/223942070814"},
 ]
 
 
