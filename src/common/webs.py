@@ -169,6 +169,7 @@ def process_reply_and_is_limited(driver_: WebDriver, post_: dict, prompt: str, m
         if not is_exist_mmix_reply:
             comment = get_ollama_comment(prompt, post_['title'], content[:3000], model=model)
             if is_limited_comment(driver_, comment):
+                logging.info("Comment is limited, stopping further processing.")
                 return True
     return False
 
