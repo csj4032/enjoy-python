@@ -11,7 +11,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.webs import setup_edge_profile_driver, move_to_buddy_added_scroll, try_click_element, get_buddies_by_added
+from common.webs import setup_edge_profile_driver, move_to_buddy_added_scroll, try_click_element, get_buddies_by_added, like_post
 from config.configuration import Configuration
 
 
@@ -24,30 +24,12 @@ def get_posts(driver_: WebDriver) -> List[WebElement]:
         return []
 
 
-def like_post(driver_: WebDriver, posts_: List[WebElement], buddy_: Dict[str, str], limit: int = 10) -> None:
-    if not posts_:
-        logging.warning(f"No posts found for {buddy_['nick_name']}.")
-        return
-    for index_, post in enumerate(posts_[:random.randint(5, limit)]):
-        try:
-            time.sleep(random.uniform(2, 3))
-            like_button = WebDriverWait(driver_, 5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.u_likeit_list_btn._button.off")))
-            driver_.execute_script("arguments[0].scrollIntoView({block: 'center'});", like_button)
-            time.sleep(random.uniform(2, 3))
-            driver_.execute_script("arguments[0].click();", like_button)
-            href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
-            logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {buddy_['nick_name']} [{href_}]")
-        except Exception as exception:
-            logging.error(f"Failed to like post {index_ + 1} for {buddy_['nick_name']}: {exception}")
-            pass
-
-
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
     driver = setup_edge_profile_driver(configuration)
     try:
-        move_to_buddy_added_scroll(driver, configuration, range_=20)
+        move_to_buddy_added_scroll(driver, configuration, range_=50)
         buddies = get_buddies_by_added(driver)
         for index, buddy in enumerate(buddies):
             try:
@@ -59,8 +41,8 @@ if __name__ == '__main__':
                 try_click_element(driver, "button[data-click-area='pls.card']")
                 like_post(driver, get_posts(driver), buddy)
                 time.sleep(random.uniform(1, 2))
-            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as e:
-                logging.error(f"Error processing buddy {buddy['nick_name']}: {e}")
+            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception:
+                logging.error(f"Error processing buddy {buddy['nick_name']}: {exception}")
                 continue
     except TimeoutException as e:
         logging.error(f"Timeout while trying to find elements: {e}")
