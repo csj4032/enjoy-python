@@ -1,16 +1,15 @@
 import logging
 import random
-import time
 import re
+import time
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Optional
 from typing import Type, TypeVar, List, Dict, Any
 
-import pytz
-from newspaper import Article
 import requests
 from bs4 import BeautifulSoup
+from newspaper import Article
 
 from config.configuration import Configuration
 
@@ -66,6 +65,15 @@ class Blog:
     link: str
     mobile_link: str
     postdate: str
+
+    def __init__(self, nick_name: str, mobile_link: str, title: str = None, feed_link: str = None, description: str = None, link: str = None, postdate: str = None) -> None:
+        self.nick_name = nick_name
+        self.mobile_link = mobile_link
+        self.title = title
+        self.feed_link = feed_link
+        self.description = description
+        self.link = link
+        self.postdate = postdate
 
     @staticmethod
     def from_dict(data: Dict) -> 'Blog':

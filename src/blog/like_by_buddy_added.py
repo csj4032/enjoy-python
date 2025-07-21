@@ -29,7 +29,7 @@ if __name__ == '__main__':
     configuration = Configuration()
     driver = setup_edge_profile_driver(configuration)
     try:
-        move_to_buddy_added_scroll(driver, configuration, range_=50)
+        move_to_buddy_added_scroll(driver, configuration, range_=10)
         buddies = get_buddies_by_added(driver)
         for index, buddy in enumerate(buddies):
             try:

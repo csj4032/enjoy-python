@@ -90,7 +90,7 @@ thumbnails/
 
 2. **프로젝트 실행**
    ```bash
-   python blog/add_like_search.py
+   python blog/like_by_search.py
    ```
 
 ## 테스트

@@ -10,7 +10,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-from blog.add_like_buddy_added import try_click_element
+from blog.like_by_buddy_added import try_click_element
 from common.search import get_naver_mobile_blog_by_trends
 from common.webs import setup_edge_profile_driver, like_post
 from config.configuration import Configuration
