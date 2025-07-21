@@ -1,7 +1,7 @@
 import logging
 import random
 import time
-from typing import List, Dict, Optional
+from typing import List, Dict
 
 from selenium.common.exceptions import NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.common.exceptions import TimeoutException
@@ -11,14 +11,8 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.webs import setup_edge_profile_driver, parse_buddy_by_added, move_to_buddy_added_scroll, try_click_element
+from common.webs import setup_edge_profile_driver, move_to_buddy_added_scroll, try_click_element, get_buddies_by_added
 from config.configuration import Configuration
-
-
-def get_buddies(driver_: WebDriver) -> List[Dict[str, str]]:
-    buddies_ = driver_.find_elements(By.CSS_SELECTOR, "div.buddy_item__evaoI")
-    neighbor_ = [parsed for buddy_ in buddies_ if (parsed := parse_buddy_by_added(buddy_)) is not None]
-    return random.sample(neighbor_, len(neighbor_))
 
 
 def get_posts(driver_: WebDriver) -> List[WebElement]:
@@ -52,10 +46,9 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
     driver = setup_edge_profile_driver(configuration)
-    driver.set_window_position(-500, 0)
     try:
-        move_to_buddy_added_scroll(driver, configuration)
-        buddies = get_buddies(driver)
+        move_to_buddy_added_scroll(driver, configuration, range_=20)
+        buddies = get_buddies_by_added(driver)
         for index, buddy in enumerate(buddies):
             try:
                 logging.info(f"Processing buddy {index + 1}/{len(buddies)}: {buddy['nick_name']} [{buddy['link']}]")

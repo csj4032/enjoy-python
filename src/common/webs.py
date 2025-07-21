@@ -1,7 +1,6 @@
 import logging
 import random
 import time
-from typing import Optional, Dict
 from urllib.parse import urlparse, parse_qs
 
 from selenium import webdriver
@@ -159,7 +158,7 @@ def is_limited_comment(driver_: WebDriver, comment_: str) -> bool:
     return write_comment(driver_, comment_) == "Limited"
 
 
-def process_reply_and_is_limited(driver_: WebDriver, post_: dict, prompt: str, model='gemma3:latest') -> bool:
+def process_reply_and_is_limited(driver_: WebDriver, post_: dict[str, str], prompt: str, model='gemma3:latest') -> bool:
     content = get_content(driver_)
     reply_button = get_reply_button(driver_)
     if is_valid_post(content, reply_button):
@@ -169,6 +168,7 @@ def process_reply_and_is_limited(driver_: WebDriver, post_: dict, prompt: str, m
         if not is_exist_mmix_reply:
             comment = get_ollama_comment(prompt, post_['title'], content[:3000], model=model)
             if is_limited_comment(driver_, comment):
+                logging.info("Comment is limited, stopping further processing.")
                 return True
     return False
 
@@ -199,6 +199,12 @@ def parse_buddy_by_added(buddy_: WebElement) -> dict[str, str] | None:
     except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException) as exception:
         logging.error(f"Failed to parse buddy element. {exception}")
         return None
+
+
+def get_buddies_by_added(driver_: WebDriver, selector: str = "div.buddy_item__evaoI") -> list[dict[str, str]]:
+    buddies_ = driver_.find_elements(By.CSS_SELECTOR, selector)
+    neighbor_ = [parsed for buddy_ in buddies_ if (parsed := parse_buddy_by_added(buddy_)) is not None]
+    return random.sample(neighbor_, len(neighbor_))
 
 
 def parse_post(post_element: WebElement, link_selector: str, name_selector: str, title_selector: str) -> dict[str, str] | None:
