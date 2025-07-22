@@ -91,7 +91,6 @@ def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> str:
                 WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
                 return "Break"
         except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
-            logging.error("Failed to find the alert layer or it was not clickable.")
             return "Success"
     else:
         logging.info(f"Buddy button for {blog_.nick_name} is not enabled, skipping.")

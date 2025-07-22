@@ -14,12 +14,6 @@ from config.configuration import Configuration
 __prompt = "'{0}' 이라는 제목의 블로그 글에 대한 코멘트를 하나만 간단하게 작성해줘. 아래 '{1}' 내용을 참고해서, 방문자 입장에서 담백하고 자연스럽게 작성해야 해. 코멘트는 50자 내외로 해줘"
 
 
-def get_buddies(driver_: WebDriver, selector: str = "div.buddy_item__evaoI") -> list[dict[str, str]]:
-    buddies_ = driver_.find_elements(By.CSS_SELECTOR, selector)
-    filtered_buddies = [parsed for buddy_ in buddies_ if (parsed := parse_buddy_by_added(buddy_)) is not None]
-    return random.sample(filtered_buddies, len(filtered_buddies))
-
-
 def try_click_tab_and_view_type(driver_: WebDriver) -> None:
     try_click_element(driver_, "button[data-click-area='ltb.post']")
     time.sleep(random.uniform(1, 2))
@@ -40,7 +34,7 @@ if __name__ == '__main__':
     try:
         move_to_buddy_added_scroll(driver, configuration, range_=20)
         buddies = get_buddies_by_added_with(driver)
-        for index, buddy in enumerate(get_buddies(driver)):
+        for index, buddy in enumerate(buddies):
             try:
                 logging.info(f"Processing buddy {index + 1}/{len(buddies)}: {buddy['nick_name']}, 'link': {buddy['link']}")
                 driver.get(buddy['link'])
