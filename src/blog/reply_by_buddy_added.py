@@ -8,7 +8,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-from common.webs import setup_firefox_profile_driver, parse_buddy_by_added, move_to_buddy_added_scroll, try_click_element, process_reply_and_is_limited, get_buddies_by_added
+from common.webs import setup_firefox_profile_driver, parse_buddy_by_added, move_to_buddy_added_scroll, try_click_element, process_reply_and_is_limited, get_buddies_by_added, get_buddies_by_added_with
 from config.configuration import Configuration
 
 __prompt = "'{0}' 이라는 제목의 블로그 글에 대한 코멘트를 하나만 간단하게 작성해줘. 아래 '{1}' 내용을 참고해서, 방문자 입장에서 담백하고 자연스럽게 작성해야 해. 코멘트는 50자 내외로 해줘"
@@ -38,8 +38,8 @@ if __name__ == '__main__':
     configuration = Configuration()
     driver = setup_firefox_profile_driver(configuration)
     try:
-        move_to_buddy_added_scroll(driver, configuration, range_=10)
-        buddies = get_buddies_by_added(driver)
+        move_to_buddy_added_scroll(driver, configuration, range_=20)
+        buddies = get_buddies_by_added_with(driver)
         for index, buddy in enumerate(get_buddies(driver)):
             try:
                 logging.info(f"Processing buddy {index + 1}/{len(buddies)}: {buddy['nick_name']}, 'link': {buddy['link']}")

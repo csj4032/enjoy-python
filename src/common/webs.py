@@ -210,6 +210,12 @@ def get_buddies_by_added(driver_: WebDriver, selector: str = "div.buddy_item__ev
     return random.sample(neighbor_, len(neighbor_))
 
 
+def get_buddies_by_added_with(driver_: WebDriver, selector: str = "div.buddy_item__evaoI") -> list[dict[str, str]]:
+    buddies_ = driver_.find_elements(By.CSS_SELECTOR, selector)
+    neighbor_ = [parsed for buddy_ in buddies_ if (parsed := parse_buddy_by_added(buddy_)) is not None and parsed['status'] == '서로이웃']
+    return random.sample(neighbor_, len(neighbor_))
+
+
 def parse_post(post_element: WebElement, link_selector: str, name_selector: str, title_selector: str) -> dict[str, str] | None:
     try:
         link = post_element.find_element(By.CSS_SELECTOR, link_selector).get_attribute('href')

@@ -107,7 +107,6 @@ def click_buddy_add_button(driver_: WebDriver) -> None:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
-    configuration.set_browser_headless(False)
     blogs = get_naver_mobile_blog_by_trends(configuration)
     driver = setup_edge_profile_driver(configuration)
     driver.set_window_position(-500, 0)
