@@ -75,18 +75,21 @@ def setup_driver() -> WebDriver:
     random_browser = random.choice(["firefox"])
     if random_browser == "chrome":
         options = ChromeOptions()
+        options.add_argument("--headless")
         service = ChromeService(ChromeDriverManager().install())
         return webdriver.Chrome(service=service, options=options)
     elif random_browser == "safari":
         options = SafariOptions()
+        options.add_argument("--headless")
         service = SafariService(executable_path="/usr/bin/safaridriver")
         return webdriver.Safari(service=service, options=options)
     elif random_browser == "edge":
         options = EdgeOptions()
+        options.add_argument("--headless")
         service = EdgeService(EdgeChromiumDriverManager().install())
         return webdriver.Edge(service=service, options=options)
     options = FirefoxOptions()
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
     service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")
     return webdriver.Firefox(service=service, options=options)
 
