@@ -249,8 +249,6 @@ def like_post(driver_: WebDriver, posts_: list[WebElement], blog: Blog, limit: i
             driver_.execute_script("arguments[0].click();", like_button)
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
             logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog.nick_name} [{href_}]")
-        except InvalidSessionIdException:
+        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException, InvalidSessionIdException):
             logging.error("WebDriver session is invalid or browser is closed.")
             break
-        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
-            pass
