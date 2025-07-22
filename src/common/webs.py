@@ -4,7 +4,7 @@ import time
 from urllib.parse import urlparse, parse_qs
 
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
+from selenium.common.exceptions import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException, InvalidSessionIdException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.edge.options import Options as EdgeOptions
 from selenium.webdriver.edge.service import Service as EdgeService
@@ -227,7 +227,7 @@ def parse_post(post_element: WebElement, link_selector: str, name_selector: str,
         return None
 
 
-def get_posts(driver, post_selector, link_selector, name_selector, title_selector):
+def get_posts(driver: WebDriver, post_selector: str, link_selector: str, name_selector: str, title_selector: str) -> list[dict[str, str]]:
     try:
         post_elements = WebDriverWait(driver, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, post_selector)))
         return [parsed for post in post_elements if (parsed := parse_post(post, link_selector, name_selector, title_selector)) is not None]
@@ -249,5 +249,8 @@ def like_post(driver_: WebDriver, posts_: list[WebElement], blog: Blog, limit: i
             driver_.execute_script("arguments[0].click();", like_button)
             href_ = post.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
             logging.info(f"Liking post {index_ + 1}/{len(posts_)} for {blog.nick_name} [{href_}]")
+        except InvalidSessionIdException:
+            logging.error("WebDriver session is invalid or browser is closed.")
+            break
         except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
             pass
