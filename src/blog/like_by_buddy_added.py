@@ -9,6 +9,7 @@ from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+from urllib3.exceptions import ReadTimeoutError
 
 from common.search import Blog
 from common.webs import setup_edge_profile_driver, move_to_buddy_added_scroll, try_click_element, get_buddies_by_added, like_post
@@ -35,13 +36,13 @@ if __name__ == '__main__':
             try:
                 logging.info(f"Processing buddy {index + 1}/{len(buddies)}: {buddy['nick_name']} [{buddy['link']}]")
                 driver.get(buddy['link'])
-                time.sleep(random.uniform(1, 2))
+                time.sleep(random.uniform(2, 3))
                 try_click_element(driver, "button[data-click-area='ltb.post']")
-                time.sleep(random.uniform(1, 2))
+                time.sleep(random.uniform(2, 3))
                 try_click_element(driver, "button[data-click-area='pls.card']")
                 like_post(driver, get_posts(driver), Blog(nick_name=buddy['nick_name'], mobile_link=buddy['link']))
-                time.sleep(random.uniform(1, 2))
-            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException, InvalidSessionIdException) as exception:
+                time.sleep(random.uniform(2, 3))
+            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, ReadTimeoutError, UnexpectedAlertPresentException, InvalidSessionIdException) as exception:
                 logging.error(f"Error processing buddy {buddy['nick_name']}: {exception}")
                 continue
     except TimeoutException as e:

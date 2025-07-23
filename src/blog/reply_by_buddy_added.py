@@ -33,7 +33,7 @@ if __name__ == '__main__':
     configuration.set_browser_headless(True)
     driver = setup_firefox_profile_driver(configuration)
     try:
-        move_to_buddy_added_scroll(driver, configuration, range_=50)
+        move_to_buddy_added_scroll(driver, configuration, range_=250)
         buddies = get_buddies_by_added_with(driver)
         for index, buddy in enumerate(buddies):
             try:
