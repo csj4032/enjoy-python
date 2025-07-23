@@ -74,29 +74,30 @@ def is_buddy_condition_met(subject_: str, buddy_count_: int, today_count: int, t
 
 
 def add_buddy_process(driver_: WebDriver, blog_, subject_: str) -> str:
-    buddy_button_radio = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.ID, "bothBuddyRadio")))
-    if buddy_button_radio.is_enabled():
-        buddy_button_radio.click()
-        time.sleep(random.uniform(2, 3))
-        textarea = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "textarea.textarea_t1")))
-        textarea.send_keys(f"안녕하세요! {blog_.nick_name}님.\n{subject_} 관련 블로그를 탐방하다가 방문하게 됐어요.\n소통하고 싶어서 서로이웃 신청합니다.\n행복한 하루 보내세요!")
-        time.sleep(random.uniform(2, 3))
-        ok_button = WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_ok")))
-        ok_button.click()
-        time.sleep(random.uniform(2, 3))
-        try:
+    try:
+        buddy_button_radio = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.ID, "bothBuddyRadio")))
+        if buddy_button_radio.is_enabled():
+            buddy_button_radio.click()
+            time.sleep(random.uniform(2, 3))
+            textarea = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "textarea.textarea_t1")))
+            textarea.send_keys(f"안녕하세요! {blog_.nick_name}님.\n{subject_} 관련 블로그를 탐방하다가 방문하게 됐어요.\n소통하고 싶어서 서로이웃 신청합니다.\n행복한 하루 보내세요!")
+            time.sleep(random.uniform(2, 3))
+            ok_button = WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_ok")))
+            ok_button.click()
+            time.sleep(random.uniform(2, 3))
             desc_text = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "p.dsc")))
             if desc_text.text.strip() == "선택 그룹의 이웃수가 초과되어 이웃을 추가할 수 없습니다 다른 그룹을 선택해주세요":
                 logging.info(f"Select group buddy limit exceeded for {blog_.nick_name}, skipping.")
                 WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.ID, "_alertLayerClose"))).click()
                 return "Break"
-        except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
-            return "Success"
-    else:
-        logging.info(f"Buddy button for {blog_.nick_name} is not enabled, skipping.")
-        close_button = WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_close")))
-        close_button.click()
-    return "Skipped"
+        else:
+            logging.info(f"Buddy button for {blog_.nick_name} is not enabled, skipping.")
+            close_button = WebDriverWait(driver_, 3).until(ec.element_to_be_clickable((By.CSS_SELECTOR, "a.btn_close")))
+            close_button.click()
+            return "Skipped"
+    except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
+        return "Error"
+    return "Success"
 
 
 def click_buddy_add_button(driver_: WebDriver) -> None:

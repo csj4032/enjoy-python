@@ -30,6 +30,7 @@ def parse_post_first(driver_: WebDriver) -> dict[str, str]:
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
+    configuration.set_browser_headless(True)
     driver = setup_firefox_profile_driver(configuration)
     try:
         move_to_buddy_added_scroll(driver, configuration, range_=50)

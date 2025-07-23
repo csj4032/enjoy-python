@@ -61,6 +61,7 @@ posts = [
     {"keywords": ["파이썬 PIP 패키지 관리자", "파이썬 PIP", "파이썬 패키지 관리자"], "link": "https://m.blog.naver.com/csj4032/223939569798"},
     {"keywords": ["가영이네", "가영이네 떡볶이", "어서와용"], "link": "https://m.blog.naver.com/csj4032/223939709220"},
     {"keywords": ["Jupyter Lab 설치 및 사용 가이드", "Jupyter Lab 설치", "Jupyter Lab 사용 가이드"], "link": "https://m.blog.naver.com/csj4032/223942070814"},
+    {"keywords": ["파이썬 람다", "파이썬 Lambda", "python Lambda"], "link": "https://m.blog.naver.com/csj4032/223944096723"},
 ]
 
 
