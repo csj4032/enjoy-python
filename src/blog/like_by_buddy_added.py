@@ -36,13 +36,13 @@ if __name__ == '__main__':
             try:
                 logging.info(f"Processing buddy {index + 1}/{len(buddies)}: {buddy['nick_name']} [{buddy['link']}]")
                 driver.get(buddy['link'])
-                time.sleep(random.uniform(2, 3))
+                time.sleep(random.uniform(1, 2))
                 try_click_element(driver, "button[data-click-area='ltb.post']")
-                time.sleep(random.uniform(2, 3))
+                time.sleep(random.uniform(1, 2))
                 try_click_element(driver, "button[data-click-area='pls.card']")
                 like_post(driver, get_posts(driver), Blog(nick_name=buddy['nick_name'], mobile_link=buddy['link']))
-                time.sleep(random.uniform(2, 3))
-            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, ReadTimeoutError, UnexpectedAlertPresentException, InvalidSessionIdException) as exception:
+                time.sleep(random.uniform(1, 2))
+            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException, InvalidSessionIdException) as exception:
                 logging.error(f"Error processing buddy {buddy['nick_name']}: {exception}")
                 continue
     except TimeoutException as e:
