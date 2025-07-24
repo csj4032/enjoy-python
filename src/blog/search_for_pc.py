@@ -1,8 +1,6 @@
 import logging
 import random
 import time
-import json
-import os
 
 from selenium import webdriver
 from selenium.common import NoSuchElementException
@@ -23,14 +21,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
+from common.utils import load_posts
 from common.webs import window_scroll
-
-logging.basicConfig(level=logging.INFO)
-
-def load_posts():
-    config_path = os.path.join(os.path.dirname(__file__), '../../config/posts.json')
-    with open(config_path, 'r', encoding='utf-8') as f:
-        return json.load(f)['posts']
 
 
 def setup_driver() -> WebDriver:
@@ -66,7 +58,8 @@ def get_search_top(driver_: WebDriver, link_: str, keyword_: str, selector: str,
 
 
 if __name__ == '__main__':
-    posts = load_posts()
+    logging.basicConfig(level=logging.INFO)
+    posts = load_meta_posts()
     shuffle_posts = random.sample(posts, len(posts))
     for post in shuffle_posts:
         keyword = random.choice(post["keywords"])

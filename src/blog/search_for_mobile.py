@@ -1,8 +1,6 @@
 import logging
 import random
 import time
-import json
-import os
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
@@ -12,17 +10,9 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
+from common.utils import load_meta_posts
 from common.webs import setup_firefox_driver, window_scroll
 from config.configuration import Configuration
-
-logging.basicConfig(level=logging.INFO)
-
-def load_posts():
-    config_path = os.path.join(os.path.dirname(__file__), '../../config/posts.json')
-    with open(config_path, 'r', encoding='utf-8') as f:
-        posts = json.load(f)['posts']
-        return [{"keywords": post["keywords"], "link": post["link"].replace("blog.naver.com", "m.blog.naver.com")} for post in posts]
-
 
 
 def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, match_element: str = "", timeout_: int = 5) -> WebElement | None:
@@ -41,12 +31,13 @@ def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, ma
 
 
 if __name__ == '__main__':
+    logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
-    posts = load_posts()
+    posts = load_meta_posts()
     shuffle_posts = random.sample(posts, len(posts))
     for post in shuffle_posts:
         keyword = random.choice(post["keywords"])
-        link = post['link']
+        link = post['mobile_link']
         driver = setup_firefox_driver(configuration)
         try:
             driver.set_window_position(0, 0)

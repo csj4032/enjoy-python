@@ -2,4 +2,5 @@
 .ipynbs_checkpoints/
 __pycache__/
 /src/config/envs/
+/src/config/meta/
 /src/enjoy_python.egg-info/*
