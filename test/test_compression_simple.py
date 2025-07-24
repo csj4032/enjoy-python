@@ -1,110 +1,42 @@
-"""
-Simple compression tests by data size for each library.
-"""
+import json, gzip, time
 
-import json
-import gzip
-import time
+try: import lz4.frame as lz4
+except ImportError: lz4 = None
 
-try:
-    import lz4.frame as lz4
-except ImportError:
-    lz4 = None
+try: import zstandard as zstd
+except ImportError: zstd = None
 
-try:
-    import zstandard as zstd
-except ImportError:
-    zstd = None
+try: import snappy
+except ImportError: snappy = None
 
-try:
-    import snappy
-except ImportError:
-    snappy = None
+try: import brotli
+except ImportError: brotli = None
 
-try:
-    import brotli
-except ImportError:
-    brotli = None
+def generate_data(size_kb): return ("Hello World! " * 100).encode()[:size_kb * 1024]
 
-
-def generate_data(size_kb: int) -> bytes:
-    """Generate test data of specified size in KB."""
-    text = "Hello World! This is test data for compression. " * 20
-    target_size = size_kb * 1024
-    repeat_count = target_size // len(text.encode()) + 1
-    data = (text * repeat_count).encode()[:target_size]
-    return data
-
-
-def test_compression(data: bytes, name: str, compress_func, decompress_func) -> dict:
-    """Test single compression algorithm."""
-    original_size = len(data)
-    
-    start = time.time()
-    compressed = compress_func(data)
-    compress_time = time.time() - start
-    
-    compressed_size = len(compressed)
-    ratio = original_size / compressed_size
-    
-    start = time.time()
-    decompressed = decompress_func(compressed)
-    decompress_time = time.time() - start
-    
-    assert data == decompressed, f"{name} integrity check failed"
-    
-    return {
-        "algorithm": name,
-        "original_kb": original_size / 1024,
-        "compressed_kb": compressed_size / 1024,
-        "ratio": ratio,
-        "compress_time": compress_time,
-        "decompress_time": decompress_time
-    }
-
+def test_compression(data, name, compress_func, decompress_func):
+    start = time.time(); compressed = compress_func(data); compress_time = time.time() - start
+    start = time.time(); decompressed = decompress_func(compressed); decompress_time = time.time() - start
+    assert data == decompressed
+    return {"name": name, "ratio": len(data) / len(compressed), "time": compress_time, "size": len(compressed) / 1024}
 
 def test_all_sizes():
-    """Test all libraries with different data sizes."""
-    sizes = [1, 10, 100, 1000]  # KB
+    algorithms = [("GZIP", gzip.compress, gzip.decompress)]
+    if lz4: algorithms.append(("LZ4", lz4.compress, lz4.decompress))
+    if zstd: algorithms.append(("ZSTD", lambda d: zstd.ZstdCompressor().compress(d), lambda d: zstd.ZstdDecompressor().decompress(d)))
+    if snappy and hasattr(snappy, 'compress'): algorithms.append(("Snappy", snappy.compress, snappy.decompress))
+    if brotli: algorithms.append(("Brotli", brotli.compress, brotli.decompress))
     
-    algorithms = [
-        ("GZIP", gzip.compress, gzip.decompress),
-    ]
+    print(f"{'Size':<6} {'Algo':<7} {'Ratio':<8} {'KB':<8} {'Time':<8}")
+    print("-" * 40)
     
-    # Add optional libraries
-    if lz4:
-        algorithms.append(("LZ4", lz4.compress, lz4.decompress))
-    
-    if zstd:
-        algorithms.append(("ZSTD", 
-                         lambda d: zstd.ZstdCompressor().compress(d),
-                         lambda d: zstd.ZstdDecompressor().decompress(d)))
-    
-    if snappy and hasattr(snappy, 'compress'):
-        algorithms.append(("Snappy", snappy.compress, snappy.decompress))
-    
-    if brotli:
-        algorithms.append(("Brotli", brotli.compress, brotli.decompress))
-    
-    print(f"{'Size(KB)':<8} {'Algorithm':<8} {'Original':<10} {'Compressed':<12} {'Ratio':<8} {'Comp(s)':<8}")
-    print("-" * 65)
-    
-    for size_kb in sizes:
+    for size_kb in [1, 10, 100, 1000]:
         data = generate_data(size_kb)
-        print(f"{size_kb:<8}", end="")
-        
         for name, compress_func, decompress_func in algorithms:
             try:
                 result = test_compression(data, name, compress_func, decompress_func)
-                print(f" {name:<8} {result['original_kb']:<10.1f} {result['compressed_kb']:<12.1f} "
-                      f"{result['ratio']:<8.2f} {result['compress_time']:<8.4f}")
+                print(f"{size_kb:<6} {name:<7} {result['ratio']:<8.1f} {result['size']:<8.1f} {result['time']:<8.4f}")
             except Exception as e:
-                print(f" {name:<8} ERROR: {str(e)[:30]}")
-        
-        print()
+                print(f"{size_kb:<6} {name:<7} ERROR")
 
-
-if __name__ == "__main__":
-    print("Compression Test by Data Size")
-    print("=" * 65)
-    test_all_sizes()
+if __name__ == "__main__": test_all_sizes()
