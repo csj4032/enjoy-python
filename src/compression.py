@@ -1,11 +1,8 @@
 import json
-import lz4.frame
+
 import pandas as pd
-import zstandard as zstd
-import snappy
-import gzip
-import brotli
 from faker import Faker
+
 
 def generate_fake_data() -> list[dict[str, str]]:
     faker = Faker("ko_KR")
