@@ -1,3 +1,8 @@
 pytest
 pytest-mock
 pytest-asyncio
+lz4
+zstandard
+python-snappy
+brotli
+faker
