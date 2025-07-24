@@ -1,7 +1,6 @@
 import logging
 import random
 import time
-from typing import Optional, Dict, List
 from selenium import webdriver
 from selenium.common import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
@@ -33,7 +32,7 @@ def setup_driver() -> WebDriver:
     return webdriver.Firefox(service=service, options=options)
 
 
-def parse_post(post_: WebElement) -> Optional[Dict[str, str]]:
+def parse_post(post_: WebElement) -> dict[str, str] | None:
     try:
         link = post_.find_element(By.CSS_SELECTOR, "a.link__A4O1D").get_attribute('href')
         name = post_.find_element(By.CSS_SELECTOR, "span.text__f81dq").text
@@ -44,7 +43,7 @@ def parse_post(post_: WebElement) -> Optional[Dict[str, str]]:
         return None
 
 
-def get_recommend_posts(driver_: WebDriver) -> List[Dict[str, str]]:
+def get_recommend_posts(driver_: WebDriver) -> list[dict[str, str]]:
     try:
         posts_elements = WebDriverWait(driver_, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, "div.postlist__qxOgF")))
         return [parsed for post_ in posts_elements if (parsed := parse_post(post_)) is not None]
@@ -63,7 +62,7 @@ def get_ollama_comment(title: str, content_: str, url: str = 'http://localhost:1
     return response.strip() if response else ""
 
 
-def generate_and_write_comment_if_needed(driver_: WebDriver, post_: Dict[str, str], content_: str, is_exist_mmix_reply_: bool) -> None:
+def generate_and_write_comment_if_needed(driver_: WebDriver, post_: dict[str, str], content_: str, is_exist_mmix_reply_: bool) -> None:
     if not is_exist_mmix_reply_:
         comment = get_ollama_comment(post_['title'], content_[:3000])
         logging.info(f"Post: {post_['name']} Generated comment: {comment}")

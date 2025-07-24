@@ -2,7 +2,6 @@ import logging
 import random
 import re
 import time
-from typing import Tuple
 
 from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
@@ -21,7 +20,7 @@ def window_scroll(driver_: WebDriver, range_, x_coord: int, y_coord: int) -> Non
         time.sleep(random.uniform(0, 1))
 
 
-def get_today_total_visitor_text(driver_: WebDriver) -> Tuple[int, int]:
+def get_today_total_visitor_text(driver_: WebDriver) -> tuple[int, int]:
     try:
         parts = WebDriverWait(driver_, 5).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text.split()
         return int(parts[1].replace(',', '')), int(parts[3].replace(',', ''))

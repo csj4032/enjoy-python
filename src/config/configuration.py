@@ -1,9 +1,9 @@
-from typing import Optional, Any
+from typing import Any
 from src.config.variables import Variables
 
 
 class Configuration:
-    def __init__(self, environment: Optional[str] = None) -> None:
+    def __init__(self, environment: str | None = None) -> None:
         self.variables = Variables(environment)
         self.variables.configure()
         self.environment = self.variables.environment
@@ -53,33 +53,33 @@ class Configuration:
     def get_browser_headless(self) -> bool:
         return self.browser_configuration.headless
 
-    def get_browser_firefox_profile_path(self) -> Optional[str]:
+    def get_browser_firefox_profile_path(self) -> str | None:
         return self.browser_configuration.firefox_profile_path
 
-    def get_browser_firefox_window_size(self) -> Optional[str]:
+    def get_browser_firefox_window_size(self) -> str | None:
         return self.browser_configuration.firefox_window_size
 
-    def get_browser_edge_profile_path(self) -> Optional[str]:
+    def get_browser_edge_profile_path(self) -> str | None:
         return self.browser_configuration.edge_profile_path
 
-    def get_browser_edge_profile(self) -> Optional[str]:
+    def get_browser_edge_profile(self) -> str | None:
         return self.browser_configuration.edge_profile
 
-    def get_browser_edge_window_size(self) -> Optional[str]:
+    def get_browser_edge_window_size(self) -> str | None:
         return self.browser_configuration.edge_window_size
 
-    def get_browser_iphone_user_agent(self) -> Optional[str]:
+    def get_browser_iphone_user_agent(self) -> str | None:
         return self.browser_configuration.iphone_user_agent
 
-    def get_browser_geckodriver_path(self) -> Optional[str]:
+    def get_browser_geckodriver_path(self) -> str | None:
         return self.browser_configuration.geckodriver_path
 
-    def get_browser_msedgedriver_path(self) -> Optional[str]:
+    def get_browser_msedgedriver_path(self) -> str | None:
         return self.browser_configuration.msedgedriver_path
 
 
 class BrowserConfiguration:
-    def __init__(self, variables: Optional[Variables] = None) -> None:
+    def __init__(self, variables: Variables | None = None) -> None:
         self.variables = variables
         self.headless = True
         self.firefox_profile_path = self.variables.firefox_profile_path

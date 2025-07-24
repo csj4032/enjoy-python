@@ -1,7 +1,6 @@
 import logging
 import random
 import time
-from typing import Optional, Dict, List
 from urllib.parse import urlparse, parse_qs
 
 from selenium import webdriver
@@ -154,7 +153,7 @@ def get_ollama_comment(prompt: str, title: str, content_: str, model: str, url: 
     return response.strip() if response else ""
 
 
-def is_valid_post(content_: str, reply_button_: Optional[WebElement]) -> bool:
+def is_valid_post(content_: str, reply_button_: WebElement | None) -> bool:
     return bool(content_) and len(content_) > 1000 and reply_button_ is not None
 
 
@@ -162,7 +161,7 @@ def is_limited_comment(driver_: WebDriver, comment_: str) -> bool:
     return write_comment(driver_, comment_) == "Limited"
 
 
-def process_reply_and_is_limited(driver_: WebDriver, post_: Dict[str, str], prompt: str, config: Configuration) -> bool:
+def process_reply_and_is_limited(driver_: WebDriver, post_: dict[str, str], prompt: str, config: Configuration) -> bool:
     content = get_content(driver_)
     reply_button = get_reply_button(driver_)
     if is_valid_post(content, reply_button):

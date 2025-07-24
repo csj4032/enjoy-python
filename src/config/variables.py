@@ -1,12 +1,11 @@
 import os
 import logging
-from typing import Optional
 
 from dotenv import load_dotenv
 
 
 class Variables:
-    def __init__(self, environment: Optional[str] = None) -> None:
+    def __init__(self, environment: str | None = None) -> None:
         self.environment = environment
         self.firefox_profile_path = None
         self.firefox_window_size = None
