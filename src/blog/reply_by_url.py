@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
@@ -21,7 +22,7 @@ def get_ollama_comment(title_: str, category_: str, content_: str, model_: str =
     response = utils.call_ollama_api(prompt, model=model_, url=url)
     return response.strip() if response else ""
 
-def setup_driver():
+def setup_driver() -> WebDriver:
     options = FirefoxOptions()
     options.add_argument(f"--headless")
     service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")

@@ -5,11 +5,12 @@ import zstandard as zstd
 import snappy
 import gzip
 import brotli
+from typing import List, Dict
 
 from faker import Faker
 
 
-def generate_fake_data():
+def generate_fake_data() -> List[Dict[str, str]]:
     faker = Faker("ko_KR")
     return [dict({
         "birth": faker.date_of_birth().strftime("%Y-%m-%d"),

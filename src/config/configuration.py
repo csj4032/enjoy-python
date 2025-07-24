@@ -1,8 +1,9 @@
+from typing import Optional, Any
 from src.config.variables import Variables
 
 
 class Configuration:
-    def __init__(self, environment: str = None):
+    def __init__(self, environment: Optional[str] = None) -> None:
         self.variables = Variables(environment)
         self.variables.configure()
         self.environment = self.variables.environment
@@ -35,50 +36,50 @@ class Configuration:
         self.naver_blog_buddy_user_limit_reached_message = self.variables.naver_blog_buddy_user_limit_reached_message
         self.browser_configuration = BrowserConfiguration(self.variables)
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         if hasattr(self.variables, item):
             return getattr(self.variables, item)
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{item}'")
 
-    def set_browser_headless(self, headless: bool):
+    def set_browser_headless(self, headless: bool) -> None:
         self.browser_configuration.headless = headless
 
-    def set_naver_api_search_display(self, display: int):
+    def set_naver_api_search_display(self, display: int) -> None:
         self.naver_api_search_display = display
 
-    def set_naver_api_search_page(self, page: int):
+    def set_naver_api_search_page(self, page: int) -> None:
         self.naver_api_search_page = page
 
     def get_browser_headless(self) -> bool:
         return self.browser_configuration.headless
 
-    def get_browser_firefox_profile_path(self):
+    def get_browser_firefox_profile_path(self) -> Optional[str]:
         return self.browser_configuration.firefox_profile_path
 
-    def get_browser_firefox_window_size(self):
+    def get_browser_firefox_window_size(self) -> Optional[str]:
         return self.browser_configuration.firefox_window_size
 
-    def get_browser_edge_profile_path(self):
+    def get_browser_edge_profile_path(self) -> Optional[str]:
         return self.browser_configuration.edge_profile_path
 
-    def get_browser_edge_profile(self):
+    def get_browser_edge_profile(self) -> Optional[str]:
         return self.browser_configuration.edge_profile
 
-    def get_browser_edge_window_size(self):
+    def get_browser_edge_window_size(self) -> Optional[str]:
         return self.browser_configuration.edge_window_size
 
-    def get_browser_iphone_user_agent(self):
+    def get_browser_iphone_user_agent(self) -> Optional[str]:
         return self.browser_configuration.iphone_user_agent
 
-    def get_browser_geckodriver_path(self):
+    def get_browser_geckodriver_path(self) -> Optional[str]:
         return self.browser_configuration.geckodriver_path
 
-    def get_browser_msedgedriver_path(self):
+    def get_browser_msedgedriver_path(self) -> Optional[str]:
         return self.browser_configuration.msedgedriver_path
 
 
 class BrowserConfiguration:
-    def __init__(self, variables: Variables = None):
+    def __init__(self, variables: Optional[Variables] = None) -> None:
         self.variables = variables
         self.headless = True
         self.firefox_profile_path = self.variables.firefox_profile_path
@@ -90,7 +91,7 @@ class BrowserConfiguration:
         self.geckodriver_path = self.variables.geckodriver_path
         self.msedgedriver_path = self.variables.msedgedriver_path
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         if hasattr(self.variables, item):
             return getattr(self.variables, item)
         raise AttributeError(f"'{self.__class__.__name__}' object has no attribute '{item}'")
