@@ -1,6 +1,8 @@
 import logging
 import random
 import time
+import json
+import os
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
@@ -15,53 +17,12 @@ from config.configuration import Configuration
 
 logging.basicConfig(level=logging.INFO)
 
-posts = [
-    {"keywords": ["A+B"], "link": "https://m.blog.naver.com/csj4032/221651220532"},
-    {"keywords": ["Adaptive Query Execution"], "link": "https://m.blog.naver.com/csj4032/223519550322"},
-    {"keywords": ["돈의 심리학", "돈 심리학"], "link": "https://m.blog.naver.com/csj4032/223523078830"},
-    {"keywords": ["칩워, 누가 반도체 전쟁의 최후 승자", "칩워 누가 반도체 전쟁"], "link": "https://m.blog.naver.com/csj4032/223520452563"},
-    {"keywords": ["Slack 새 워크스페이스", "Slack 워크스페이스"], "link": "https://m.blog.naver.com/csj4032/223901622139"},
-    {"keywords": ["신경 끄기 기술", "신경끄기기술"], "link": "https://m.blog.naver.com/csj4032/223914881533"},
-    {"keywords": ["Iceberg Deltalake"], "link": "https://m.blog.naver.com/csj4032/223914908740"},
-    {"keywords": ["30가지 패턴 분산 시스템", "패턴 분산 시스템"], "link": "https://m.blog.naver.com/csj4032/223915376396"},
-    {"keywords": ["Java JDK", "Java JDK 설치"], "link": "https://m.blog.naver.com/csj4032/223915459310"},
-    {"keywords": ["파이썬 설치", "파이썬설치"], "link": "https://m.blog.naver.com/csj4032/223915465848"},
-    {"keywords": ["Java 개발환경 설정", "Java 개발환경"], "link": "https://m.blog.naver.com/csj4032/223915500234"},
-    {"keywords": ["일과 일상 나"], "link": "https://m.blog.naver.com/csj4032/223915566048"},
-    {"keywords": ["파이썬이란"], "link": "https://m.blog.naver.com/csj4032/223916421094"},
-    {"keywords": ["팔란티어(Palantir), 팔란티어 Palantir"], "link": "https://m.blog.naver.com/csj4032/223916603908"},
-    {"keywords": ["용기와 겁쟁이"], "link": "https://m.blog.naver.com/csj4032/223917250644"},
-    {"keywords": ["파이썬 기초, 자료형", "파이썬 자료형"], "link": "https://m.blog.naver.com/csj4032/223920432120"},
-    {"keywords": ["파이썬 제어"], "link": "https://m.blog.naver.com/csj4032/223920432120"},
-    {"keywords": ["파이썬 입출"], "link": "https://m.blog.naver.com/csj4032/223920674251"},
-    {"keywords": ["파이썬 반복", "파이썬 반복문"], "link": "https://m.blog.naver.com/csj4032/223920710832"},
-    {"keywords": ["파이썬 Package"], "link": "https://m.blog.naver.com/csj4032/223921565651"},
-    {"keywords": ["파이썬 Exception"], "link": "https://m.blog.naver.com/csj4032/223922827334"},
-    {"keywords": ["Git", "Git이란"], "link": "https://m.blog.naver.com/csj4032/223922857147"},
-    {"keywords": ["Autonomous Future"], "link": "https://m.blog.naver.com/csj4032/223922988417"},
-    {"keywords": ["파이썬 둘러보기 Built-in"], "link": "https://m.blog.naver.com/csj4032/223923023951"},
-    {"keywords": ["Tungsten UnsafeRow"], "link": "https://m.blog.naver.com/csj4032/223923130905"},
-    {"keywords": ["파이썬 둘러보기 Standard"], "link": "https://m.blog.naver.com/csj4032/223924524629"},
-    {"keywords": ["파이썬 둘러보기 Date"], "link": "https://m.blog.naver.com/csj4032/223924560646"},
-    {"keywords": ["Airflow Architecture"], "link": "https://m.blog.naver.com/csj4032/223925152875"},
-    {"keywords": ["런던베이글뮤지엄"], "link": "https://m.blog.naver.com/csj4032/223925476680"},
-    {"keywords": ["네이버 개발자 센터 가입", "네이버개발자센터"], "link": "https://m.blog.naver.com/csj4032/223925844087"},
-    {"keywords": ["Airflow ignore"], "link": "https://m.blog.naver.com/csj4032/223926096620"},
-    {"keywords": ["Slack 리마인더", "Slack 리마인더 설정", "Slack 설정"], "link": "https://m.blog.naver.com/csj4032/223926096620"},
-    {"keywords": ["Python List Comprehension", "Python Comprehension", "Python List"], "link": "https://m.blog.naver.com/csj4032/223927935180"},
-    {"keywords": ["팔란티어(Palantir) RFx 블로그 시리즈", "팔란티어(Palantir) RFx", "팔란티어 블로그"], "link": "https://m.blog.naver.com/csj4032/223929117712"},
-    {"keywords": ["파이썬 왈러스 연산자", "파이썬 왈러스", "파이썬 연산자", "Python 왈러스"], "link": "https://m.blog.naver.com/csj4032/223930544260"},
-    {"keywords": ["파이썬 Iteration Protocol", "파이썬 Iteration", "Python Iteration Protocol"], "link": "https://m.blog.naver.com/csj4032/223934421842"},
-    {"keywords": ["제로 투 원 (Zero to One)", "제로투원 Zero to One", "Zero to One"], "link": "https://m.blog.naver.com/csj4032/223935057219"},
-    {"keywords": ["파이썬 Coroutine 예외처리", "파이썬 Iterator", "파이썬 Iterator 예외처리"], "link": "https://m.blog.naver.com/csj4032/223936858166"},
-    {"keywords": ["파이썬 Iterator, Generator", "파이썬 Iterator", "파이썬 Coroutine"], "link": "https://blog.naver.com/csj4032/223936858166"},
-    {"keywords": ["파이썬 예외처리", "파이썬 예외 처리", "파이썬 예외"], "link": "https://m.blog.naver.com/csj4032/223937102638"},
-    {"keywords": ["파이썬 Virtual Environment", "파이썬 Virtual", "파이썬 가상환경"], "link": "https://m.blog.naver.com/csj4032/223938902715"},
-    {"keywords": ["파이썬 PIP 패키지 관리자", "파이썬 PIP", "파이썬 패키지 관리자"], "link": "https://m.blog.naver.com/csj4032/223939569798"},
-    {"keywords": ["가영이네", "가영이네 떡볶이", "어서와용"], "link": "https://m.blog.naver.com/csj4032/223939709220"},
-    {"keywords": ["Jupyter Lab 설치 및 사용 가이드", "Jupyter Lab 설치", "Jupyter Lab 사용 가이드"], "link": "https://m.blog.naver.com/csj4032/223942070814"},
-    {"keywords": ["파이썬 람다", "파이썬 Lambda", "python Lambda"], "link": "https://m.blog.naver.com/csj4032/223944096723"},
-]
+def load_posts():
+    config_path = os.path.join(os.path.dirname(__file__), '../../config/posts.json')
+    with open(config_path, 'r', encoding='utf-8') as f:
+        posts = json.load(f)['posts']
+        return [{"keywords": post["keywords"], "link": post["link"].replace("blog.naver.com", "m.blog.naver.com")} for post in posts]
+
 
 
 def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, match_element: str = "", timeout_: int = 5) -> WebElement | None:
@@ -81,6 +42,7 @@ def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, ma
 
 if __name__ == '__main__':
     configuration = Configuration()
+    posts = load_posts()
     shuffle_posts = random.sample(posts, len(posts))
     for post in shuffle_posts:
         keyword = random.choice(post["keywords"])
