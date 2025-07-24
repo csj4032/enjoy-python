@@ -14,13 +14,9 @@ from selenium.webdriver.support.ui import WebDriverWait
 import common.webs as utils
 from common.llm import call_gemini_api
 from config.configuration import Configuration
+from constants import Prompts, Models, APIConfig
 
 logging.basicConfig(level=logging.INFO)
-
-__gemini_model = "gemini-2.0-flash"
-__gemini_api_url = f"https://generativelanguage.googleapis.com/v1beta/models/{__gemini_model}:generateContent"
-__generation_config = {"temperature": 0.7, "max_output_tokens": 2048, "top_p": 1.0, "top_k": 32, }
-__prompt = "'{0}' 이라는 제목의 블로그 포스트에 대한 코멘트를 하나만 간단하게 작성해줘 아래 '{1}' 내용을 바탕으로, 방문자 입장에서 담백하고 자연스럽게 작성해야 해. 코멘트 길이는 50자 내외로 맞춰 줘."
 
 
 def setup_driver() -> WebDriver:
@@ -53,12 +49,12 @@ def get_recommend_posts(driver_: WebDriver) -> list[dict[str, str]]:
 
 
 def get_gemini_comment(gemini_api_key: str, gemini_model: str, title: str, content_: str) -> str:
-    response = call_gemini_api(gemini_api_key, gemini_model, __prompt.format(title, content_), __generation_config)
+    response = call_gemini_api(gemini_api_key, gemini_model, Prompts.RECOMMEND_COMMENT.format(title, content_), APIConfig.GEMINI_GENERATION_CONFIG)
     return response.strip() if response else ""
 
 
-def get_ollama_comment(title: str, content_: str, url: str = 'http://localhost:11434/api/generate') -> str:
-    response = utils.call_ollama_api(__prompt.format(title, content_), "gemma3:latest", url=url)
+def get_ollama_comment(title: str, content_: str, url: str = APIConfig.OLLAMA_DEFAULT_URL) -> str:
+    response = utils.call_ollama_api(Prompts.RECOMMEND_COMMENT.format(title, content_), Models.OLLAMA_DEFAULT, url=url)
     return response.strip() if response else ""
 
 

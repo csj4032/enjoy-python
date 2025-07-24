@@ -11,22 +11,21 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from common.webs import setup_firefox_profile_driver, window_scroll, process_reply_and_is_limited
 from config.configuration import Configuration
-
-__prompt = "'{0}' 이라는 제목의 블로그 글에 대한 코멘트를 하나만 간단하게 작성해줘. 아래 '{1}' 내용을 참고해서, 방문자 입장에서 담백하고 자연스럽게 작성해야 해. 코멘트는 50자 내외로 해줘"
+from constants import Prompts, Selectors
 
 
 def parse_post(post_: WebElement) -> dict | None:
     try:
         name = post_.find_element(By.CSS_SELECTOR, "strong.name__aDUPc").text.strip()
-        title = post_.find_element(By.CSS_SELECTOR, "strong.title__UUn4H").text.strip()
-        link = post_.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute('href')
+        title = post_.find_element(By.CSS_SELECTOR, Selectors.POST_TITLE).text.strip()
+        link = post_.find_element(By.CSS_SELECTOR, Selectors.POST_LINK).get_attribute('href')
         return {"name": name, "title": title, "link": link}
     except NoSuchElementException as exception_:
         logging.warning(f"Failed to parse post element. {exception_}")
     return None
 
 
-def get_posts(driver_: WebDriver, selector: str = "div.card__reUkU") -> list[dict]:
+def get_posts(driver_: WebDriver, selector: str = Selectors.POST_CARD) -> list[dict]:
     try:
         posts_ = WebDriverWait(driver_, 5).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
         return [parse_post(post_) for post_ in posts_ if parse_post(post_) is not None]
@@ -50,7 +49,7 @@ if __name__ == '__main__':
                 logging.info(f"Processing reply {index + 1}/{len(posts)} Post: {post['name']}, Title: {post['title']}, Link: {post['link']}")
                 driver.get(post['link'])
                 time.sleep(random.uniform(2, 3))
-                if process_reply_and_is_limited(driver, post, __prompt, configuration):
+                if process_reply_and_is_limited(driver, post, Prompts.BLOG_COMMENT, configuration):
                     break
             except TimeoutException as exception:
                 logging.error(f"Post: {post['name']}, Link: {post['link']}, Title: {post['title']} Error : {exception}")
