@@ -7,6 +7,10 @@ Enjoy Python 프로젝트는 Selenium을 활용하여 네이버 블로그와 관
 
 ```
 README.md
+requirements.txt
+requirements-test.txt
+pyproject.toml
+pytest.ini
 netebook/
     blog/
         buddy.ipynb
@@ -19,19 +23,20 @@ src/
     blog/
         __init__.py
         add_buddy_search.py
-        add_like_buddy.py
-        add_like_recommend.py
-        add_like_search.py
-        add_reply_buddy.py
-        add_reply_recommend.py
-        add_reply_url.py
-        extract_blog.py
-        search_mobile.py
-        search_pc.py
-        thumbnail.py
-        to_buddy.py
+        extract_blog_by_buddy.py
+        extract_blog_by_url.py
+        like_by_buddy_added.py
+        like_by_recommend.py
+        like_by_search.py
+        reply_by_buddy.py
+        reply_by_buddy_added.py
+        reply_by_recommend.py
+        reply_by_url.py
+        search_for_mobile.py
+        search_for_pc.py
     common/
         __init__.py
+        llm.py
         search.py
         webs.py
     config/
@@ -44,8 +49,12 @@ test/
     test_async_gather.py
     test_configuration.py
     test_kafka_consumer.py
+    test_ollama.py
     test_pandas_join.py
+    test_search.py
     test_thread_coroutine.py
+    test_webs.py
+    test_x.py
     test_yield.py
 thumbnails/
     designPattern_template_method_pattern.png
@@ -64,16 +73,16 @@ thumbnails/
 ## 주요 기능
 
 1. **블로그 검색**
-   - `search_mobile.py`, `search_pc.py`를 통해 네이버 블로그 게시물을 검색합니다.
+   - `search_for_mobile.py`, `search_for_pc.py`를 통해 네이버 블로그 게시물을 검색합니다.
 
 2. **좋아요 추가**
-   - `add_like_search.py`, `add_like_buddy.py` 등을 사용하여 블로그 게시물에 "좋아요"를 추가합니다.
+   - `like_by_search.py`, `like_by_buddy_added.py`, `like_by_recommend.py` 등을 사용하여 블로그 게시물에 "좋아요"를 추가합니다.
 
 3. **댓글 작성**
-   - `add_reply_buddy.py`, `add_reply_recommend.py` 등을 통해 블로그 게시물에 댓글을 작성합니다.
+   - `reply_by_buddy.py`, `reply_by_buddy_added.py`, `reply_by_recommend.py`, `reply_by_url.py` 등을 통해 블로그 게시물에 댓글을 작성합니다.
 
 4. **블로그 데이터 추출**
-   - `extract_blog.py`를 사용하여 블로그 데이터를 수집합니다.
+   - `extract_blog_by_buddy.py`, `extract_blog_by_url.py`를 사용하여 블로그 데이터를 수집합니다.
 
 ## 의존성
 

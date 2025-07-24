@@ -1,7 +1,6 @@
 import logging
 import random
 import time
-from typing import List
 
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.common.by import By
@@ -16,7 +15,7 @@ from common.webs import setup_edge_profile_driver, like_post
 from config.configuration import Configuration
 
 
-def get_posts(driver_: WebDriver) -> List[WebElement]:
+def get_posts(driver_: WebDriver) -> list[WebElement]:
     try:
         return WebDriverWait(driver_, 3).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, "div.card__reUkU")))
     except TimeoutException:
