@@ -3,7 +3,7 @@ import random
 import re
 import time
 
-from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException, InvalidSessionIdException
+from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
@@ -113,8 +113,8 @@ if __name__ == '__main__':
         for index, blog in enumerate(random.sample(blogs, len(blogs))):
             logging.info(f"Processing {index + 1}/{len(blogs)}: {blog.nick_name}, {blog.mobile_link}")
             time.sleep(random.uniform(2, 3))
+            driver.get(blog.mobile_link)
             try:
-                driver.get(blog.mobile_link)
                 today_total_visitor_count = get_today_total_visitor_text(driver)
                 buddy_count = get_buddy_count(driver)
                 subject = get_subject(driver)
@@ -133,7 +133,7 @@ if __name__ == '__main__':
                 add_result = add_buddy_process(driver, blog, subject)
                 if add_result == "Break":
                     break
-            except (TimeoutException, InvalidSessionIdException):
+            except TimeoutException:
                 logging.warning(f"Buddy add button not found for {blog.nick_name}, skipping.")
                 pass
             time.sleep(random.uniform(1, 2))
