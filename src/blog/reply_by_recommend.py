@@ -58,8 +58,8 @@ def get_gemini_comment(gemini_api_key: str, gemini_model: str, title: str, conte
     return response.strip() if response else ""
 
 
-def get_ollama_comment(title: str, content_: str) -> str:
-    response = utils.call_ollama_api(__prompt.format(title, content_), "gemma3:latest")
+def get_ollama_comment(title: str, content_: str, url: str = 'http://localhost:11434/api/generate') -> str:
+    response = utils.call_ollama_api(__prompt.format(title, content_), "gemma3:latest", url=url)
     return response.strip() if response else ""
 
 

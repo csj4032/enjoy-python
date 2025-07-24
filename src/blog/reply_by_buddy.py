@@ -50,7 +50,7 @@ if __name__ == '__main__':
                 logging.info(f"Processing reply {index + 1}/{len(posts)} Post: {post['name']}, Title: {post['title']}, Link: {post['link']}")
                 driver.get(post['link'])
                 time.sleep(random.uniform(2, 3))
-                if process_reply_and_is_limited(driver, post, __prompt):
+                if process_reply_and_is_limited(driver, post, __prompt, configuration):
                     break
             except TimeoutException as exception:
                 logging.error(f"Post: {post['name']}, Link: {post['link']}, Title: {post['title']} Error : {exception}")

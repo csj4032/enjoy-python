@@ -148,8 +148,8 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
     return "Success"
 
 
-def get_ollama_comment(prompt, title: str, content_: str, model: str = 'gemma3:latest') -> str:
-    response = call_ollama_api(prompt.format(title, content_), model=model)
+def get_ollama_comment(prompt, title: str, content_: str, model: str, url: str) -> str:
+    response = call_ollama_api(prompt.format(title, content_), model=model, url=url)
     return response.strip() if response else ""
 
 
@@ -161,7 +161,7 @@ def is_limited_comment(driver_: WebDriver, comment_: str) -> bool:
     return write_comment(driver_, comment_) == "Limited"
 
 
-def process_reply_and_is_limited(driver_: WebDriver, post_: dict[str, str], prompt: str, model='gemma3:latest') -> bool:
+def process_reply_and_is_limited(driver_: WebDriver, post_: dict[str, str], prompt: str, config: Configuration) -> bool:
     content = get_content(driver_)
     reply_button = get_reply_button(driver_)
     if is_valid_post(content, reply_button):
@@ -169,7 +169,7 @@ def process_reply_and_is_limited(driver_: WebDriver, post_: dict[str, str], prom
         time.sleep(random.uniform(2, 3))
         is_exist_mmix_reply = get_mmix_reply(driver_)
         if not is_exist_mmix_reply:
-            comment = get_ollama_comment(prompt, post_['title'], content[:3000], model=model)
+            comment = get_ollama_comment(prompt, post_['title'], content[:3000], model=config.ollama_default_model, url=config.ollama_api_url)
             if is_limited_comment(driver_, comment):
                 logging.info("Comment is limited, stopping further processing.")
                 return True

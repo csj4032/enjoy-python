@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "A Python project for automating blog interactions"
 readme = "README.md"
 requires-python = ">=3.12"
-license = {text = "MIT"}
+license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -16,9 +16,8 @@ classifiers = [
 ]
 dependencies = [
     "selenium",
-    "pytest",
-    "pytest-mock",
-    "pytest-asyncio"
+    "google-generativeai",
+    "requests",
 ]
 
 [project.optional-dependencies]

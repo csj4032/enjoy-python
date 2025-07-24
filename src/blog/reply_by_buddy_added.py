@@ -43,7 +43,7 @@ if __name__ == '__main__':
                 blog = parse_post_first(driver)
                 driver.get(blog['link'])
                 time.sleep(random.uniform(2, 3))
-                if process_reply_and_is_limited(driver, blog, __prompt):
+                if process_reply_and_is_limited(driver, blog, __prompt, configuration):
                     break
             except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
                 logging.error(f"Buddy {buddy['nick_name']} link {buddy['link']} not found or has no posts.")

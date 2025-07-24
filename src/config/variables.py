@@ -14,6 +14,8 @@ class Variables:
         self.edge_window_size = None
         self.gemini_api_key = None
         self.gemini_model = None
+        self.ollama_api_url = None
+        self.ollama_default_model = None
         self.iphone_user_agent = None
         self.google_trends_rss_url = None
         self.x_api_key = None
@@ -54,6 +56,8 @@ class Variables:
         self.iphone_user_agent = os.getenv('IPHONE_USER_AGENT')
         self.gemini_api_key = os.getenv('GEMINI_API_KEY')
         self.gemini_model = os.getenv('GEMINI_MODEL')
+        self.ollama_api_url = os.getenv('OLLAMA_API_URL', 'http://localhost:11434/api/generate')
+        self.ollama_default_model = os.getenv('OLLAMA_DEFAULT_MODEL', 'gemma3:latest')
         self.google_trends_rss_url = os.getenv('GOOGLE_TRENDS_RSS_URL', 'https://trends.google.com/trending/rss')
         self.x_api_key = os.getenv('X_API_KEY')
         self.x_api_key_secret = os.getenv('X_API_KEY_SECRET')

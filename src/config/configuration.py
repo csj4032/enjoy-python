@@ -8,6 +8,8 @@ class Configuration:
         self.environment = self.variables.environment
         self.gemini_api_key = self.variables.gemini_api_key
         self.gemini_model = self.variables.gemini_model
+        self.ollama_api_url = self.variables.ollama_api_url
+        self.ollama_default_model = self.variables.ollama_default_model
         self.google_trends_rss_url = self.variables.google_trends_rss_url
         self.x_api_key = self.variables.x_api_key
         self.x_api_key_secret = self.x_api_key_secret

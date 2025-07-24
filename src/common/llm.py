@@ -1,14 +1,6 @@
 import google.generativeai as genai
 import requests
-
-
-def generate_comment(prompt, model='gemma3:latest', api_key=None, generation_config=None, safety_settings=None):
-    if 'gemini' in model:
-        if not api_key:
-            raise ValueError("Gemini API key is required for Gemini models.")
-        return call_gemini_api(api_key, model, prompt, generation_config, safety_settings)
-    else:
-        return call_ollama_api(prompt, model)
+from src.config.configuration import Configuration
 
 
 def call_gemini_api(api_key, model_name, context_=None, generation_config=None, safety_settings=None):
@@ -18,8 +10,7 @@ def call_gemini_api(api_key, model_name, context_=None, generation_config=None, 
     return response.text
 
 
-def call_ollama_api(prompt, model='gemma3:latest'):
-    url = "http://localhost:11434/api/generate"
+def call_ollama_api(prompt, url: str = None, model: str = None) -> str:
     payload = {"model": model, "prompt": prompt, "stream": False}
     response = requests.post(url, json=payload)
     if response.status_code == 200:
