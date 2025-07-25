@@ -21,7 +21,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-from common.utils import load_posts
+from common.utils import load_posts, load_meta_posts
 from common.webs import window_scroll
 
 
