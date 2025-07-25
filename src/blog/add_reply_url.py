@@ -6,21 +6,20 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
-import blog.utils as utils
-from config.configuration import Configuration
+import common.webs as utils
 
 logging.basicConfig(level=logging.INFO)
 
-__prompt = "'{0}' 이라는 제목의 블로그 글에 대한 코멘트를 작성해줘. 아래 '{1}' 내용을 참고해서, 남성 방문자 입장에서 자연스러운 한 문장으로 작성해야 해."
+__prompt = "'{0}' 이라는 제목의 {1} 카테고리 블로그 글에 대한 코멘트를 작성해줘. 아래 '{2}' 내용을 참고해서, 대한민국 남성 방문자 입장에서 자연스러운 한 문장으로 작성해야 해."
 
 
-def get_ollama_comment(title_, content_, model='exaone3.5:latest'):
-    response = utils.call_ollama_api(__prompt.format(title_, content_), model=model)
+def get_ollama_comment(title_: str, category_: str, content_: str, model_: str = 'gemma3:latest') -> str:
+    prompt = __prompt.format(title_, category_, content_)
+    response = utils.call_ollama_api(prompt, model=model_)
     return response.strip() if response else ""
-
 
 def setup_driver():
     options = FirefoxOptions()
@@ -32,10 +31,11 @@ def setup_driver():
 if __name__ == '__main__':
     driver = setup_driver()
     try:
-        driver.get("https://m.blog.naver.com/PostView.naver?blogId=velyo_o_&logNo=223929883978&navType=by")
-        title = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
+        driver.get("https://m.blog.naver.com/PostView.naver?blogId=91077334&logNo=223938907868&navType=by")
+        category = WebDriverWait(driver, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.blog_category"))).text.strip()
+        title = WebDriverWait(driver, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.se-title-text"))).text.strip()
         content = utils.get_content(driver)
-        comment = get_ollama_comment(title, content)
+        comment = get_ollama_comment(title, category, content)
         logging.info(f"Generated comment: {comment}")
     except Exception as exception:
         logging.error(f"An error occurred: {exception}")

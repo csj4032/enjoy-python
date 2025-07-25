@@ -2,8 +2,9 @@ import logging
 import random
 import re
 import time
+from typing import Tuple
 
-from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException, InvalidSessionIdException
+from selenium.common import TimeoutException, NoSuchElementException, ElementClickInterceptedException, UnexpectedAlertPresentException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
@@ -20,7 +21,7 @@ def window_scroll(driver_: WebDriver, range_, x_coord: int, y_coord: int) -> Non
         time.sleep(random.uniform(0, 1))
 
 
-def get_today_total_visitor_text(driver_: WebDriver) -> tuple[int, int]:
+def get_today_total_visitor_text(driver_: WebDriver) -> Tuple[int, int]:
     try:
         parts = WebDriverWait(driver_, 5).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.count__T3YO8"))).text.split()
         return int(parts[1].replace(',', '')), int(parts[3].replace(',', ''))
@@ -113,8 +114,8 @@ if __name__ == '__main__':
         for index, blog in enumerate(random.sample(blogs, len(blogs))):
             logging.info(f"Processing {index + 1}/{len(blogs)}: {blog.nick_name}, {blog.mobile_link}")
             time.sleep(random.uniform(2, 3))
+            driver.get(blog.mobile_link)
             try:
-                driver.get(blog.mobile_link)
                 today_total_visitor_count = get_today_total_visitor_text(driver)
                 buddy_count = get_buddy_count(driver)
                 subject = get_subject(driver)
@@ -133,7 +134,7 @@ if __name__ == '__main__':
                 add_result = add_buddy_process(driver, blog, subject)
                 if add_result == "Break":
                     break
-            except (TimeoutException, InvalidSessionIdException):
+            except TimeoutException:
                 logging.warning(f"Buddy add button not found for {blog.nick_name}, skipping.")
                 pass
             time.sleep(random.uniform(1, 2))

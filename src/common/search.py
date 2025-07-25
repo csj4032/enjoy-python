@@ -4,7 +4,8 @@ import re
 import time
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Type, TypeVar, Any
+from typing import Optional
+from typing import Type, TypeVar, List, Dict, Any
 
 import requests
 from bs4 import BeautifulSoup
@@ -17,23 +18,23 @@ T = TypeVar("T")
 
 @dataclass
 class NewsItem:
-    title: str | None = None
-    snippet: str | None = None
-    url: str | None = None
-    picture: str | None = None
-    source: str | None = None
+    title: Optional[str] = None
+    snippet: Optional[str] = None
+    url: Optional[str] = None
+    picture: Optional[str] = None
+    source: Optional[str] = None
 
 
 @dataclass
 class TrendItem:
-    title: str | None = None
-    approx_traffic: str | None = None
-    description: str | None = None
-    link: str | None = None
-    pub_date: str | None = None
-    picture: str | None = None
-    picture_source: str | None = None
-    news_items: list[NewsItem] = field(default_factory=list)
+    title: Optional[str] = None
+    approx_traffic: Optional[str] = None
+    description: Optional[str] = None
+    link: Optional[str] = None
+    pub_date: Optional[str] = None
+    picture: Optional[str] = None
+    picture_source: Optional[str] = None
+    news_items: List[NewsItem] = field(default_factory=list)
 
     @staticmethod
     def from_xml(item) -> 'TrendItem':
@@ -75,7 +76,7 @@ class Blog:
         self.postdate = postdate
 
     @staticmethod
-    def from_dict(data: dict) -> 'Blog':
+    def from_dict(data: Dict) -> 'Blog':
         return Blog(
             title=data.get("title", ""),
             feed_link=data.get("link", ""),
@@ -93,10 +94,10 @@ class NaverSearchBlogResult:
     total: int
     start: int
     display: int
-    items: list[Blog]
+    items: List[Blog]
 
     @staticmethod
-    def from_dict(data: dict) -> 'NaverSearchBlogResult':
+    def from_dict(data: Dict) -> 'NaverSearchBlogResult':
         return NaverSearchBlogResult(
             lastBuildDate=data.get("lastBuildDate", ""),
             total=data.get("total", 0),
@@ -120,7 +121,7 @@ class News:
     public_article_datetime: str
 
     @staticmethod
-    def from_dict(data: dict) -> 'News':
+    def from_dict(data: Dict) -> 'News':
         article = get_article(data.get("originallink", ""))
         return News(
             title=data.get("title", ""),
@@ -142,10 +143,10 @@ class NaverSearchNewsResult:
     total: int
     start: int
     display: int
-    items: list[News]
+    items: List[News]
 
     @staticmethod
-    def from_dict(data: dict) -> 'NaverSearchNewsResult':
+    def from_dict(data: Dict) -> 'NaverSearchNewsResult':
         result = NaverSearchNewsResult(
             lastBuildDate=data.get("lastBuildDate", ""),
             total=data.get("total", 0),
@@ -156,13 +157,13 @@ class NaverSearchNewsResult:
         return result
 
 
-def get_google_trends(google_trends_rss_url: str, geo="KR") -> list[TrendItem]:
+def get_google_trends(google_trends_rss_url: str, geo="KR") -> List[TrendItem]:
     response = requests.get(f"{google_trends_rss_url}?geo={geo}")
     soup = BeautifulSoup(response.content, 'xml')
     return [TrendItem.from_xml(item) for item in soup.find_all('item')]
 
 
-def get_naver_api_response(query: str, url: str, client_id: str, client_secret: str, display: int = 10, start: int = 1, sort: str = "sim") -> dict | None:
+def get_naver_api_response(query: str, url: str, client_id: str, client_secret: str, display: int = 10, start: int = 1, sort: str = "sim") -> Optional[dict]:
     time.sleep(random.uniform(0.5, 1.5))
     try:
         response = requests.get(url, headers={"X-Naver-Client-Id": client_id, "X-Naver-Client-Secret": client_secret}, params={"query": query, "display": display, "start": start, "sort": sort})
@@ -200,7 +201,7 @@ def deduplicate_by_attr(items: list, attr: str) -> list:
     return [item for item in items if (v := getattr(item, attr, None)) and not (v in seen or seen.add(v))]
 
 
-def get_naver_search_by_query(configuration: Configuration, type_: str, query: str) -> list[T]:
+def get_naver_search_by_query(configuration: Configuration, type_: str, query: str) -> List[T]:
     url = f"{configuration.naver_api_search_url}/{type_}"
     class_ = get_class_type(type_)
     client_id = configuration.naver_api_client_id
@@ -211,11 +212,11 @@ def get_naver_search_by_query(configuration: Configuration, type_: str, query: s
     return deduplicate_by_attr([item for page_no in range(page) for item in class_.from_dict(get_naver_api_response(query, url, client_id, client_secret, display, (page_no + 1) * display - (display - 1), sort)).items], "link")
 
 
-def get_naver_search_by_trends(configuration: Configuration, type_: str) -> list[dict[str, Any]]:
+def get_naver_search_by_trends(configuration: Configuration, type_: str) -> List[Dict[str, Any]]:
     return [{"title": trend.title, "items": get_naver_search_by_query(configuration, type_, trend.title)} for trend in get_google_trends(configuration.google_trends_rss_url, geo="KR")]
 
 
-def get_naver_news_article_by_trends(configuration: Configuration) -> list[News]:
+def get_naver_news_article_by_trends(configuration: Configuration) -> List[News]:
     return [news for trend in get_naver_search_by_trends(configuration, "news") for news in trend.get("items", [])]
 
 
@@ -223,5 +224,5 @@ def get_naver_mobile_blog_by_trends(configuration: Configuration) -> list[Blog]:
     return [blog for trend in get_naver_search_by_trends(configuration, "blog") for blog in trend.get("items", []) if "m.blog.naver.com" in blog.mobile_link]
 
 
-def get_naver_news_by_from_to(configuration: Configuration, query: str, from_datetime: datetime, to_datetime: datetime) -> list[News]:
+def get_naver_news_by_from_to(configuration: Configuration, query: str, from_datetime: datetime, to_datetime: datetime) -> List[News]:
     return [news for news in get_naver_search_by_query(configuration, "news", query=query) if from_datetime < news.public_datetime < to_datetime]

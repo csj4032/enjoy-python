@@ -22,7 +22,7 @@ from common.search import Blog
 from config.configuration import Configuration
 
 
-def set_firefox_driver(configuration: Configuration, options: FirefoxOptions) -> WebDriver:
+def set_firefox_driver(configuration, options) -> WebDriver:
     configuration.get_browser_headless() and options.add_argument("--headless")
     options.add_argument(f"--window-size={configuration.get_browser_firefox_window_size()}")
     options.set_preference("general.useragent.override", configuration.get_browser_iphone_user_agent())
@@ -55,7 +55,7 @@ def setup_edge_profile_driver(configuration: Configuration) -> WebDriver:
     return webdriver.Edge(service=service, options=options)
 
 
-def setup_safari_profile_driver(configuration: Configuration) -> WebDriver:
+def setup_safari_profile_driver(configuration: Configuration):
     options = SafariOptions()
     options.add_argument("--headless") if configuration.get_browser_headless() else None
     service = SafariService(executable_path='/usr/bin/safaridriver')
@@ -64,14 +64,14 @@ def setup_safari_profile_driver(configuration: Configuration) -> WebDriver:
     return driver
 
 
-def window_scroll(driver_: WebDriver, range_: int, x_coord: int, y_coord: int, scroll_random_start_time: float = 0, scroll_random_end_time: float = 10, link: str = "") -> None:
+def window_scroll(driver_: WebDriver, range_, x_coord, y_coord, scroll_random_start_time=0, scroll_random_end_time=10, link=""):
     for index_ in range(range_):
         logging.info(f"Scrolling {index_ + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         time.sleep(random.uniform(scroll_random_start_time, scroll_random_end_time))
 
 
-def window_scroll_more(driver_: WebDriver, range_: int, x_coord: int, y_coord: int, selector: str = "button.button_show__VRCFg", scroll_random_start_time: float = 0, scroll_random_end_time: float = 10, link: str = "") -> None:
+def window_scroll_more(driver_: WebDriver, range_, x_coord, y_coord, selector="button.button_show__VRCFg", scroll_random_start_time=0, scroll_random_end_time=10, link="") -> None:
     for index in range(range_):
         logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
@@ -84,7 +84,7 @@ def window_scroll_more(driver_: WebDriver, range_: int, x_coord: int, y_coord: i
             pass
 
 
-def window_scroll_top(driver_: WebDriver, range_: int, x_coord: int, y_coord: int, selector: str = "button.button_show__VRCFg", link: str = "") -> None:
+def window_scroll_top(driver_: WebDriver, range_, x_coord, y_coord, selector="button.button_show__VRCFg", link="") -> None:
     for index in range(range_):
         logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
@@ -148,12 +148,12 @@ def write_comment(driver_: WebDriver, comment_: str) -> str:
     return "Success"
 
 
-def get_ollama_comment(prompt: str, title: str, content_: str, model: str, url: str) -> str:
+def get_ollama_comment(prompt, title: str, content_: str, model: str, url: str) -> str:
     response = call_ollama_api(prompt.format(title, content_), model=model, url=url)
     return response.strip() if response else ""
 
 
-def is_valid_post(content_: str, reply_button_: WebElement | None) -> bool:
+def is_valid_post(content_: str, reply_button_: WebElement) -> bool:
     return bool(content_) and len(content_) > 1000 and reply_button_ is not None
 
 
@@ -183,7 +183,7 @@ def try_click_element(driver_: WebDriver, selector: str, timeout: int = 3) -> No
         pass
 
 
-def move_to_buddy_added_scroll(driver_: WebDriver, configuration_: Configuration, range_: int = 200, x_coord: int = 0, y_coord: int = 500, scroll_randon_start_time: float = 0, scroll_randon_end_time: float = 1, selector: str = "button[data-click-area='ngr.youadd']") -> None:
+def move_to_buddy_added_scroll(driver_: WebDriver, configuration_: Configuration, range_=200, x_coord=0, y_coord=500, scroll_randon_start_time=0, scroll_randon_end_time=1, selector="button[data-click-area='ngr.youadd']") -> None:
     logging.info(f"Navigating to {configuration_.naver_blog_mobile_buddy_list_url} to move to buddy added scroll.")
     driver_.get(configuration_.naver_blog_mobile_buddy_list_url)
     you_add_to_click = WebDriverWait(driver_, 5).until(ec.element_to_be_clickable((By.CSS_SELECTOR, selector)))

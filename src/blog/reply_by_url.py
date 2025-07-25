@@ -6,22 +6,22 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
 
 import common.webs as utils
-from constants import Prompts, Models, APIConfig
 
 logging.basicConfig(level=logging.INFO)
 
+__prompt = "'{0}' 이라는 제목의 {1} 카테고리 블로그 글에 대한 코멘트를 작성해줘. 아래 '{2}' 내용을 참고해서, 대한민국 남성 방문자 입장에서 자연스러운 한 문장으로 작성해야 해."
 
-def get_ollama_comment(title_: str, category_: str, content_: str, model_: str = Models.OLLAMA_DEFAULT, url: str = APIConfig.OLLAMA_DEFAULT_URL) -> str:
-    prompt = Prompts.URL_COMMENT.format(title_, category_, content_)
+
+def get_ollama_comment(title_: str, category_: str, content_: str, model_: str = 'gemma3:latest', url: str = 'http://localhost:11434/api/generate') -> str:
+    prompt = __prompt.format(title_, category_, content_)
     response = utils.call_ollama_api(prompt, model=model_, url=url)
     return response.strip() if response else ""
 
-def setup_driver() -> WebDriver:
+def setup_driver():
     options = FirefoxOptions()
     options.add_argument(f"--headless")
     service = FirefoxService(executable_path="/opt/homebrew/bin/geckodriver")

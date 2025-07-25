@@ -10,7 +10,8 @@ from selenium.webdriver.support.ui import WebDriverWait
 
 from common.webs import setup_firefox_profile_driver, move_to_buddy_added_scroll, try_click_element, process_reply_and_is_limited, get_buddies_by_added_with
 from config.configuration import Configuration
-from constants import Prompts, Selectors
+
+__prompt = "'{0}' 이라는 제목의 블로그 글에 대한 코멘트를 하나만 간단하게 작성해줘. 아래 '{1}' 내용을 참고해서, 방문자 입장에서 담백하고 자연스럽게 작성해야 해. 코멘트는 50자 내외로 해줘"
 
 
 def try_click_tab_and_view_type(driver_: WebDriver) -> None:
@@ -20,9 +21,9 @@ def try_click_tab_and_view_type(driver_: WebDriver) -> None:
 
 
 def parse_post_first(driver_: WebDriver) -> dict[str, str]:
-    post_element = WebDriverWait(driver_, 5).until(ec.presence_of_element_located((By.CSS_SELECTOR, Selectors.POST_CARD)))
-    title = post_element.find_element(By.CSS_SELECTOR, Selectors.POST_TITLE).text
-    link = post_element.find_element(By.CSS_SELECTOR, Selectors.POST_LINK).get_attribute("href")
+    post_element = WebDriverWait(driver_, 5).until(ec.presence_of_element_located((By.CSS_SELECTOR, "div.card__reUkU")))
+    title = post_element.find_element(By.CSS_SELECTOR, "strong.title__UUn4H").text
+    link = post_element.find_element(By.CSS_SELECTOR, "a.link__Awlz5").get_attribute("href")
     return {"link": link, "title": title}
 
 
@@ -32,7 +33,7 @@ if __name__ == '__main__':
     configuration.set_browser_headless(True)
     driver = setup_firefox_profile_driver(configuration)
     try:
-        move_to_buddy_added_scroll(driver, configuration, range_=250)
+        move_to_buddy_added_scroll(driver, configuration, range_=50)
         buddies = get_buddies_by_added_with(driver)
         for index, buddy in enumerate(buddies):
             try:
@@ -42,7 +43,7 @@ if __name__ == '__main__':
                 blog = parse_post_first(driver)
                 driver.get(blog['link'])
                 time.sleep(random.uniform(2, 3))
-                if process_reply_and_is_limited(driver, blog, Prompts.BLOG_COMMENT, configuration):
+                if process_reply_and_is_limited(driver, blog, __prompt, configuration):
                     break
             except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException):
                 logging.error(f"Buddy {buddy['nick_name']} link {buddy['link']} not found or has no posts.")

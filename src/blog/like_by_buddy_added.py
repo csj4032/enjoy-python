@@ -42,7 +42,7 @@ if __name__ == '__main__':
                 try_click_element(driver, "button[data-click-area='pls.card']")
                 like_post(driver, get_posts(driver), Blog(nick_name=buddy['nick_name'], mobile_link=buddy['link']))
                 time.sleep(random.uniform(1, 2))
-            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException, InvalidSessionIdException) as exception:
+            except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException, InvalidSessionIdException, ReadTimeoutError) as exception:
                 logging.error(f"Error processing buddy {buddy['nick_name']}: {exception}")
                 continue
     except TimeoutException as e:

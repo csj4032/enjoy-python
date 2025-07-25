@@ -1,0 +1,9 @@
+selenium
+pytest
+pytest-mock
+pytest-asyncio
+
+[test]
+pytest
+pytest-mock
+pytest-asyncio

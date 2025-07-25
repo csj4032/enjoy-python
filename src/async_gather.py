@@ -3,37 +3,37 @@ import logging
 from datetime import datetime
 
 
-async def task0() -> None:
+async def task0():
     logging.info(f"작업 0 시작: {datetime.now()}")
     await asyncio.sleep(5)
     logging.info(f"작업 0 완료: {datetime.now()}")
 
 
-async def task1() -> None:
+async def task1():
     logging.info(f"작업 1 시작: {datetime.now()}")
     await asyncio.sleep(2)
     logging.info(f"작업 1 완료: {datetime.now()}")
 
 
-async def task2() -> None:
+async def task2():
     logging.info(f"작업 2 시작: {datetime.now()}")
     await asyncio.sleep(1)
     logging.info(f"작업 2 완료: {datetime.now()}")
 
 
-async def task3() -> None:
+async def task3():
     logging.info(f"작업 3 시작: {datetime.now()}")
     await asyncio.sleep(5)
     logging.info(f"작업 3 완료: {datetime.now()}")
 
 
-async def task4() -> None:
+async def task4():
     logging.info(f"작업 4 시작: {datetime.now()}")
     await asyncio.sleep(1)
     logging.info(f"작업 4 완료: {datetime.now()}")
 
 
-async def async_gather() -> None:
+async def async_gather():
     await task0()
     await asyncio.gather(task1(), task2(), task3())
     await task4()
