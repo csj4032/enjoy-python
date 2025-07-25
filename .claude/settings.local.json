@@ -6,7 +6,9 @@
       "Bash(git commit:*)",
       "Bash(git mv:*)",
       "Bash(rm:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(chmod:*)",
+      "Bash(./git_rewrite.sh)"
     ],
     "deny": []
   }
