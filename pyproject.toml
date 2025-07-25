@@ -23,8 +23,13 @@ dependencies = [
 [project.optional-dependencies]
 test = [
     "pytest",
-    "pytest-mock",
-    "pytest-asyncio"
+    "pytest-mock", 
+    "pytest-asyncio",
+    "lz4",
+    "zstandard",
+    "python-snappy",
+    "brotli",
+    "faker"
 ]
 
 [tool.setuptools.packages.find]
