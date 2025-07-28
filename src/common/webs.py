@@ -39,7 +39,6 @@ def setup_firefox_profile_driver(configuration: Configuration) -> WebDriver:
     options = FirefoxOptions()
     options.add_argument("-profile")
     options.add_argument(configuration.get_browser_firefox_profile_path())
-    options.add_argument("--window-size=450,1200")
     return set_firefox_driver(configuration, options)
 
 
