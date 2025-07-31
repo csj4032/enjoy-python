@@ -1,6 +1,17 @@
 {
   "posts": [
     {"keywords": ["A+B"], "link": "https://blog.naver.com/csj4032/221651220532", "mobile_link": "https://m.blog.naver.com/csj4032/221651220532"},
+    {"keywords": ["추상 팩토리 패턴 Abstract Factory Pattern", "추상 팩토리 패턴"], ",link": "https://blog.naver.com/csj4032/223520399344", "mobile_link": "https://m.blog.naver.com/csj4032/223520399344"},
+    {"keywords": ["팩토리 메서드 패턴 Factory Method Pattern ", "팩토리 메서드 패턴"], ",link": "https://blog.naver.com/csj4032/223532907537", "mobile_link": "https://m.blog.naver.com/csj4032/223532907537"},
+    {"keywords": ["싱글턴 패턴 Singleton Pattern", "싱글턴 패턴"], ",link": "https://blog.naver.com/csj4032/223533379183", "mobile_link": "https://m.blog.naver.com/csj4032/223533379183"},
+    {"keywords": ["프로토타입 패턴 Prototype Pattern", "프로토타입 패턴"], ",link": "https://blog.naver.com/csj4032/223534041667", "mobile_link": "https://m.blog.naver.com/csj4032/223534041667"},
+    {"keywords": ["빌더 패턴 Builder Pattern", "빌더 패턴"], ",link": "https://blog.naver.com/csj4032/223534267760", "mobile_link": "https://m.blog.naver.com/csj4032/223534267760"},
+    {"keywords": ["어댑터 패턴 Adapter Pattern", "Adapter Pattern"], ",link": "https://blog.naver.com/csj4032/223539366820", "mobile_link": "https://m.blog.naver.com/csj4032/223539366820"},
+    {"keywords": ["브리지 패턴 Bridge Pattern", "브리지 패턴"], ",link": "https://blog.naver.com/csj4032/223539550437", "mobile_link": "https://m.blog.naver.com/csj4032/223539550437"},
+    {"keywords": ["컴포지트 패턴 Composite Pattern", "컴포지트 패턴"], ",link": "https://blog.naver.com/csj4032/223539762833", "mobile_link": "https://m.blog.naver.com/csj4032/223539762833"},
+    {"keywords": ["데코레이터 패턴  Decorator Pattern ", "데코레이터 패턴"], ",link": "https://blog.naver.com/csj4032/223540872276", "mobile_link": "https://m.blog.naver.com/csj4032/223540872276"},
+    {"keywords": ["퍼사드 패턴 Facade Pattern", "퍼사드 패턴"], ",link": "https://blog.naver.com/csj4032/223540976646", "mobile_link": "https://m.blog.naver.com/csj4032/223540976646"},
+    {"keywords": ["플라이웨이트 패턴 Flyweight Pattern", "Flyweight Pattern"], ",link": "https://blog.naver.com/csj4032/223542036413", "mobile_link": "https://m.blog.naver.com/csj4032/223542036413"},
     {"keywords": ["Adaptive Query Execution"], "link": "https://blog.naver.com/csj4032/223519550322", "mobile_link": "https://m.blog.naver.com/csj4032/223519550322"},
     {"keywords": ["돈의 심리학", "돈 심리학"], "link": "https://blog.naver.com/csj4032/223523078830", "mobile_link": "https://m.blog.naver.com/csj4032/223523078830"},
     {"keywords": ["칩워, 누가 반도체 전쟁의 최후 승자", "칩워 누가 반도체 전쟁"], "link": "https://blog.naver.com/csj4032/223520452563", "mobile_link": "https://m.blog.naver.com/csj4032/223520452563"},
