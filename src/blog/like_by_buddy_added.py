@@ -30,7 +30,7 @@ if __name__ == '__main__':
     configuration = Configuration()
     driver = setup_edge_profile_driver(configuration)
     try:
-        move_to_buddy_added_scroll(driver, configuration, range_=250)
+        move_to_buddy_added_scroll(driver, configuration, range_=50)
         buddies = get_buddies_by_added(driver)
         for index, buddy in enumerate(buddies):
             try:
@@ -42,10 +42,11 @@ if __name__ == '__main__':
                 try_click_element(driver, "button[data-click-area='pls.card']")
                 like_post(driver, get_posts(driver), Blog(nick_name=buddy['nick_name'], mobile_link=buddy['link']))
                 time.sleep(random.uniform(2, 3))
+                driver.close()
             except (NoSuchElementException, ElementClickInterceptedException, TimeoutException, UnexpectedAlertPresentException, InvalidSessionIdException) as exception:
                 logging.error(f"Error processing buddy {buddy['nick_name']}: {exception}")
                 continue
-    except TimeoutException as e:
+    except (TimeoutException, InvalidSessionIdException) as e:
         logging.error(f"Timeout while trying to find elements: {e}")
     finally:
         time.sleep(random.uniform(1, 2))
