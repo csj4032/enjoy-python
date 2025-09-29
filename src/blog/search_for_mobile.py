@@ -54,7 +54,7 @@ if __name__ == '__main__':
             if matched_element is None:
                 WebDriverWait(driver, 5).until(ec.element_to_be_clickable((By.LINK_TEXT, "블로그"))).click()
                 logging.info(f"Clicked on '블로그' link to search in blog section.")
-                matched_element = get_search(driver, link, keyword, "a.dsc_link", "블로그 영역")
+                matched_element = get_search(driver, link, keyword, "a.Vyg_WCkzlKBSk8usfmMA.t0ZSeRhLDI88qOA3Nvk6", "블로그 영역")
             time.sleep(random.uniform(2, 2))
             if matched_element is not None:
                 start_time = time.time()
