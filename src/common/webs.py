@@ -48,7 +48,7 @@ def setup_edge_profile_driver(configuration: Configuration) -> WebDriver:
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument(f"--user-data-dir={configuration.get_browser_edge_profile_path()}")
-    options.add_argument(f"profile-directory={configuration.get_browser_edge_profile()}")
+    options.add_argument(f"--profile-directory={configuration.get_browser_edge_profile()}")
     options.add_argument(f"--window-size={configuration.get_browser_edge_window_size()}")
     service = EdgeService(executable_path=configuration.get_browser_msedgedriver_path())
     return webdriver.Edge(service=service, options=options)
