@@ -55,6 +55,17 @@
     {"keywords": ["Jupyter Lab 설치 및 사용 가이드", "Jupyter Lab 설치", "Jupyter Lab 사용 가이드"], "link": "https://blog.naver.com/csj4032/223942070814", "mobile_link": "https://m.blog.naver.com/csj4032/223942070814"},
     {"keywords": ["파이썬 람다 Lambda", "파이썬 람다", "파이썬 Lambda"], "link": "https://blog.naver.com/csj4032/223944096723", "mobile_link": "https://m.blog.naver.com/csj4032/223944096723"},
     {"keywords": ["파이썬 Asyncio 비동기 I/O", "파이썬 Asyncio 비동기", "파이썬 비동기"], "link": "https://blog.naver.com/csj4032/223946634973", "mobile_link": "https://m.blog.naver.com/csj4032/223946634973"},
-    {"keywords": ["파이썬 Multiprocessing", "파이썬 멀티프로세싱", "파이썬 멀티"], "link": "https://blog.naver.com/csj4032/223952193232", "mobile_link": "https://m.blog.naver.com/csj4032/223952193232"}
+    {"keywords": ["파이썬 Multiprocessing", "파이썬 멀티프로세싱", "파이썬 멀티"], "link": "https://blog.naver.com/csj4032/223952193232", "mobile_link": "https://m.blog.naver.com/csj4032/223952193232"},
+    {"keywords": ["Solo Unicorn", "Solo", "Unicorn"], "link": "https://blog.naver.com/csj4032/224015691578", "mobile_link": "https://m.blog.naver.com/csj4032/224015691578"},
+    {"keywords": ["복제되지 않은 신뢰, 분산되지 않은 책임", "복제되지 않은 신뢰", "분산되지 않은 책임"], "link": "https://blog.naver.com/csj4032/224025748429", "mobile_link": "https://m.blog.naver.com/csj4032/224025748429"},
+    {"keywords": ["OpenAI DevDay 2025", "OpenAI DevDay", "OpenAI 2025"], "link": "https://blog.naver.com/csj4032/224034435170", "mobile_link": "https://m.blog.naver.com/csj4032/224034435170"},
+    {"keywords": ["AI 시대, 대체 불가능해지는 완벽한 방법", "AI 시대, 대체", "AI 시대"], "link": "https://blog.naver.com/csj4032/224063271843", "mobile_link": "https://m.blog.naver.com/csj4032/224063271843"},
+    {"keywords": ["GPU 26만 장의 약속, 그리고 남은 현실", "GPU 26만 장의 약속", "그리고 남은 현실"], "link": "https://blog.naver.com/csj4032/224067722265", "mobile_link": "https://m.blog.naver.com/csj4032/224067722265"},
+    {"keywords": ["데이터 모델링, DDD(Domain-Driven Design)", "팔란티어 온톨로지", "데이터 모델링 팔란티어"], "link": "https://blog.naver.com/csj4032/224073523190", "mobile_link": "https://m.blog.naver.com/csj4032/224073523190"},
+    {"keywords": ["Apache Gluten: SIMD로 강화된 Spark 네이티브 가속기", "Apache Gluten", "SIMD Spark"], "link": "https://blog.naver.com/csj4032/224083263642", "mobile_link": "https://m.blog.naver.com/csj4032/224083263642"},
+    {"keywords": ["Airflow Command", "Airflow Command Line", "Airflow Interface"], "link": "https://blog.naver.com/csj4032/224098106727", "mobile_link": "https://m.blog.naver.com/csj4032/224098106727"},
+    {"keywords": ["Pandas", "Pandas 란", "Pandas 란?"], "link": "https://blog.naver.com/csj4032/224123445522", "mobile_link": "https://m.blog.naver.com/csj4032/224123445522"},
+    {"keywords": ["Series", "Series 란", "Series 란"], "link": "https://blog.naver.com/csj4032/224173971279", "mobile_link": "https://m.blog.naver.com/csj4032/224173971279"}
+
   ]
 }
