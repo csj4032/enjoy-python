@@ -29,10 +29,10 @@ def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, ma
     return None
 
 
-def set_query_and_submit(driver, keyword: str, timeout: int = 10):
+def set_query_and_submit(driver_, keyword_: str, timeout: int = 10):
     wait = WebDriverWait(driver, timeout)
     search_box = wait.until(ec.presence_of_element_located((By.ID, "query")))
-    driver.execute_script("""
+    driver_.execute_script("""
         const el = arguments[0];
         const keyword = arguments[1];
 
@@ -46,7 +46,7 @@ def set_query_and_submit(driver, keyword: str, timeout: int = 10):
         } else {
             el.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', code:'Enter', bubbles:true}));
         }
-    """, search_box, keyword)
+    """, search_box, keyword_)
 
 
 if __name__ == '__main__':
