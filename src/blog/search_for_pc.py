@@ -73,9 +73,9 @@ if __name__ == '__main__':
             search_box.send_keys(random.choice(post["keywords"]))
             search_box.send_keys(Keys.RETURN)
             time.sleep(random.uniform(1, 3))
-            matched_element = get_search_top(driver, link, keyword, "a.link_tit", "검색 최상단 매치")
+            matched_element = get_search_top(driver, link, keyword, "a[data-heatmap-target='.link']", "검색 최상단 매치")
             if matched_element is None:
-                matched_element = get_search_top(driver, link, keyword, "a.title_link", "검색 인기글 매치")
+                matched_element = get_search_top(driver, link, keyword, "a[data-heatmap-target='.link']", "검색 인기글 매치")
             if matched_element is None:
                 blog_tab = WebDriverWait(driver, 5).until(ec.presence_of_element_located((By.LINK_TEXT, "블로그")))
                 blog_tab.click()

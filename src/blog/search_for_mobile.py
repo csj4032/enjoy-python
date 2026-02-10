@@ -52,7 +52,7 @@ def set_query_and_submit(driver, keyword: str, timeout: int = 10):
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
-    configuration.set_browser_headless(False)
+    configuration.set_browser_headless(True)
     posts = load_meta_posts()
     shuffle_posts = random.sample(posts, len(posts))
     for post in shuffle_posts:
@@ -64,10 +64,10 @@ if __name__ == '__main__':
             driver.get(configuration.naver_mobile_url)
             time.sleep(random.uniform(1, 2))
             set_query_and_submit(driver, keyword)
-            matched_element = get_search(driver, link, keyword, "a.aEO4VwHkswcCgUXjRh6w.Lznm151o9qLNLUldttoM", "검색 최상단 영역")
+            matched_element = get_search(driver, link, keyword, "a[data-heatmap-target='.link']", "검색 최상단 영역")
             time.sleep(random.uniform(1, 3))
             if matched_element is None:
-                matched_element = get_search(driver, link, keyword, "a.title_link", "인기글 영역")
+                matched_element = get_search(driver, link, keyword, "a[data-heatmap-target='.link']", "인기글 영역")
             time.sleep(random.uniform(1, 3))
             if matched_element is None:
                 WebDriverWait(driver, 5).until(ec.element_to_be_clickable((By.LINK_TEXT, "블로그"))).click()
