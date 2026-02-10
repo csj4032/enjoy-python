@@ -4,7 +4,6 @@ import time
 
 from selenium.common import TimeoutException
 from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support import expected_conditions as ec
@@ -30,9 +29,30 @@ def get_search(driver_: WebDriver, link_: str, keyword_: str, selector_: str, ma
     return None
 
 
+def set_query_and_submit(driver, keyword: str, timeout: int = 10):
+    wait = WebDriverWait(driver, timeout)
+    search_box = wait.until(ec.presence_of_element_located((By.ID, "query")))
+    driver.execute_script("""
+        const el = arguments[0];
+        const keyword = arguments[1];
+
+        el.scrollIntoView({block:'center'});
+        el.focus();
+        el.value = keyword;
+        el.dispatchEvent(new Event('input', { bubbles: true }));
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+        if (el.form) {
+            el.form.submit();
+        } else {
+            el.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', code:'Enter', bubbles:true}));
+        }
+    """, search_box, keyword)
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
+    configuration.set_browser_headless(False)
     posts = load_meta_posts()
     shuffle_posts = random.sample(posts, len(posts))
     for post in shuffle_posts:
@@ -43,9 +63,7 @@ if __name__ == '__main__':
             driver.set_window_position(0, 0)
             driver.get(configuration.naver_mobile_url)
             time.sleep(random.uniform(1, 2))
-            search_box = WebDriverWait(driver, 1).until(ec.presence_of_element_located((By.ID, "query")))
-            search_box.send_keys(random.choice(post["keywords"]))
-            search_box.send_keys(Keys.RETURN)
+            set_query_and_submit(driver, keyword)
             matched_element = get_search(driver, link, keyword, "a.aEO4VwHkswcCgUXjRh6w.Lznm151o9qLNLUldttoM", "검색 최상단 영역")
             time.sleep(random.uniform(1, 3))
             if matched_element is None:
@@ -54,7 +72,7 @@ if __name__ == '__main__':
             if matched_element is None:
                 WebDriverWait(driver, 5).until(ec.element_to_be_clickable((By.LINK_TEXT, "블로그"))).click()
                 logging.info(f"Clicked on '블로그' link to search in blog section.")
-                matched_element = get_search(driver, link, keyword, "a.Vyg_WCkzlKBSk8usfmMA.t0ZSeRhLDI88qOA3Nvk6", "블로그 영역")
+                matched_element = get_search(driver, link, keyword, "a[data-heatmap-target='.nblg']", "블로그 영역")
             time.sleep(random.uniform(2, 2))
             if matched_element is not None:
                 start_time = time.time()
