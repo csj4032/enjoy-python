@@ -81,7 +81,7 @@ class Configuration:
 class BrowserConfiguration:
     def __init__(self, variables: Variables | None = None) -> None:
         self.variables = variables
-        self.headless = False
+        self.headless = True
         self.firefox_profile_path = self.variables.firefox_profile_path
         self.firefox_window_size = self.variables.firefox_window_size
         self.edge_profile_path = self.variables.edge_profile_path
