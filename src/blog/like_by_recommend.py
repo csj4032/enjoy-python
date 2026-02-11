@@ -2,9 +2,7 @@ import logging
 import random
 import time
 
-from selenium.common.exceptions import NoSuchElementException
-from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.common.action_chains import ActionChains
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.support.ui import WebDriverWait
@@ -12,33 +10,45 @@ from selenium.webdriver.support.ui import WebDriverWait
 from common.webs import setup_firefox_profile_driver, window_scroll
 from config.configuration import Configuration
 
+recommend_post_selector = "li.item__Mfnij"
+nick_selector = "span.nickname__XgyBA"
+title_selector = "div.title__cQ_Ls"
+link_selector = "a.link__rlnCZ"
+
+like_button_selector = "a.u_likeit_list_button"
+like_on_selector = "a.u_likeit_list_button._button.on"
+like_off_selector = "a.u_likeit_list_button._button.off"
+
+
+def wait_page_ready(driver_, timeout=10):
+    WebDriverWait(driver_, timeout).until(
+        lambda d: d.execute_script("return document.readyState") == "complete"
+    )
+
 
 def parse_post(post_):
     try:
-        nick_name = post_.find_element(By.CSS_SELECTOR, "span.nickname__XgyBA").text.strip()
-        title = post_.find_element(By.CSS_SELECTOR, "div.title__cQ_Ls").text.strip()
-        link = post_.find_element(By.CSS_SELECTOR, "a.link__rlnCZ").get_attribute('href')
+        nick_name = post_.find_element(By.CSS_SELECTOR, nick_selector).text.strip()
+        title = post_.find_element(By.CSS_SELECTOR, title_selector).text.strip()
+        link = post_.find_element(By.CSS_SELECTOR, link_selector).get_attribute("href")
         return {"nick_name": nick_name, "title": title, "link": link}
-    except NoSuchElementException as exception_:
-        logging.warning(f"Failed to parse post element. {exception_}")
-    return None
+    except NoSuchElementException as e:
+        logging.warning(f"Failed to parse post element. {e}")
+        return None
 
 
-def get_recommend_posts(driver_, selector):
+def get_recommend_posts(driver_, selector=recommend_post_selector):
     try:
         posts_ = WebDriverWait(driver_, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
-        return [parsed for post_ in posts_ if (parsed := parse_post(post_)) is not None]
-    except TimeoutException as exception_:
-        logging.warning(f"Timeout while trying to find elements: {exception_}")
-    return []
-
-
-def get_like_element(driver_, selector="span.u_likeit_icon.__reaction__zeroface"):
-    try:
-        return WebDriverWait(driver_, 2).until(ec.presence_of_element_located((By.CSS_SELECTOR, selector)))
-    except TimeoutException as exception_:
-        logging.warning(f"Like button not found or not clickable: {exception_}")
-    return None
+        parsed = []
+        for p in posts_:
+            item = parse_post(p)
+            if item:
+                parsed.append(item)
+        return parsed
+    except TimeoutException as e:
+        logging.warning(f"Timeout while trying to find elements: {e}")
+        return []
 
 
 def handle_like_limit_popup(driver_, timeout=2) -> bool:
@@ -50,10 +60,36 @@ def handle_like_limit_popup(driver_, timeout=2) -> bool:
             return True
         return False
     except TimeoutException:
-        pass
+        return False
 
 
-if __name__ == '__main__':
+def get_like_state(driver_, timeout=2):
+    try:
+        WebDriverWait(driver_, timeout).until(ec.presence_of_element_located((By.CSS_SELECTOR, like_button_selector)))
+    except TimeoutException:
+        return None
+    if driver_.find_elements(By.CSS_SELECTOR, like_on_selector):
+        return "ON"
+    if driver_.find_elements(By.CSS_SELECTOR, like_off_selector):
+        return "OFF"
+    return None
+
+
+def click_like_if_possible(driver_):
+    state_ = get_like_state(driver_, timeout=2)
+    if state_ is None:
+        return "NO_BUTTON"
+    if state_ == "ON":
+        return "ALREADY_LIKED"
+    try:
+        btn = WebDriverWait(driver_, 3).until(ec.presence_of_element_located((By.CSS_SELECTOR, like_off_selector)))
+        driver_.execute_script("arguments[0].click();", btn)
+        return "LIKED"
+    except TimeoutException:
+        return "CLICK_FAILED"
+
+
+if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
     configuration = Configuration()
     configuration.set_browser_headless(False)
@@ -61,28 +97,34 @@ if __name__ == '__main__':
     driver.set_window_position(-1000, 0)
     try:
         driver.get(configuration.naver_blog_mobile_recommendation_url)
+        wait_page_ready(driver, 10)
         window_scroll(driver, 10, 0, 500, 0, 1, configuration.naver_blog_mobile_recommendation_url)
-        time.sleep(random.uniform(1, 2))
-        posts = get_recommend_posts(driver, "li.item__Mfnij")
+        time.sleep(random.uniform(0.6, 1.2))
+        posts = get_recommend_posts(driver)
         post_count = len(posts)
-        for index, post in enumerate(posts):
-            driver.get(post['link'])
-            logging.info(f"Processing {index + 1}/{post_count} Visiting post: {post['title']} by {post['nick_name']}")
-            window_scroll(driver, 5, 0, 1000, 0, 1, post['link'])
-            like_button = driver.find_element(By.CSS_SELECTOR, "a.u_likeit_list_button._button")
-            if like_button is None:
-                logging.info(f"Like button not found for post: {post['title']}")
+        for index, post in enumerate(posts, start=1):
+            driver.get(post["link"])
+            wait_page_ready(driver, 10)
+            logging.info(f"Processing {index}/{post_count} Visiting: {post['title']} by {post['nick_name']}")
+            state = get_like_state(driver, timeout=2)
+            if state is None:
+                logging.info(f"No like button: {post['title']}")
                 continue
-            if like_button.get_attribute("aria-pressed") == "true":
-                logging.info(f"Post already liked: {post['title']}")
+            if state == "ON":
+                logging.info(f"Already liked: {post['title']}")
                 continue
-            driver.execute_script("arguments[0].click();", like_button)
-            if handle_like_limit_popup(driver, timeout=2):
-                logging.info("Like limit popup handled (clicked OK).")
+            window_scroll(driver, 5, 0, 800, 0, 1, post["link"])
+            result = click_like_if_possible(driver)
+            if result == "LIKED":
+                if handle_like_limit_popup(driver, timeout=2):
+                    logging.info("Like limit popup handled (clicked OK).")
+            elif result == "CLICK_FAILED":
+                logging.warning(f"Like click failed: {post['title']}")
             time.sleep(random.uniform(1, 2))
-    except TimeoutException as exception:
-        logging.error(f"Timeout while trying to find elements: {exception}")
+            logging.info(f"Processing {index}/{post_count} Completed: {post['title']} by {post['nick_name']} - Result: {result}")
+    except TimeoutException as e:
+        logging.error(f"Timeout while trying to find elements: {e}")
     finally:
-        time.sleep(random.uniform(1, 2))
+        time.sleep(random.uniform(0.6, 1.2))
         driver.quit()
         logging.info("Driver closed.")

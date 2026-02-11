@@ -65,19 +65,19 @@ def setup_safari_profile_driver(configuration: Configuration) -> WebDriver:
 
 def window_scroll(driver_: WebDriver, range_: int, x_coord: int, y_coord: int, scroll_random_start_time: float = 0, scroll_random_end_time: float = 10, link: str = "") -> None:
     for index_ in range(range_):
-        logging.info(f"Scrolling {index_ + 1}/{range_} times. link : {link}")
+        logging.debug(f"Scrolling {index_ + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         time.sleep(random.uniform(scroll_random_start_time, scroll_random_end_time))
 
 
 def window_scroll_more(driver_: WebDriver, range_: int, x_coord: int, y_coord: int, selector: str = "button.button_show__VRCFg", scroll_random_start_time: float = 0, scroll_random_end_time: float = 10, link: str = "") -> None:
     for index in range(range_):
-        logging.info(f"Scrolling {index + 1}/{range_} times. link : {link}")
+        logging.debug(f"Scrolling {index + 1}/{range_} times. link : {link}")
         driver_.execute_script(f"window.scrollBy({x_coord}, {y_coord});")
         try:
             more_button = WebDriverWait(driver_, 1).until(ec.element_to_be_clickable((By.CSS_SELECTOR, selector)))
             more_button.click()
-            logging.info(f"Clicked more button {index + 1}/{range_} times. link : {link}")
+            logging.debug(f"Clicked more button {index + 1}/{range_} times. link : {link}")
             time.sleep(random.uniform(scroll_random_start_time, scroll_random_end_time))
         except TimeoutException:
             pass
