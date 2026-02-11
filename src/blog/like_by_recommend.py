@@ -88,7 +88,7 @@ if __name__ == "__main__":
     try:
         driver.get(configuration.naver_blog_mobile_recommendation_url)
         wait_page_ready(driver, 10)
-        window_scroll(driver, 100, 0, 500, 0, 1, configuration.naver_blog_mobile_recommendation_url)
+        window_scroll(driver, 500, 0, 500, 0, 1, configuration.naver_blog_mobile_recommendation_url)
         time.sleep(random.uniform(0.6, 1.2))
         posts = get_recommend_posts(driver)
         post_count = len(posts)
