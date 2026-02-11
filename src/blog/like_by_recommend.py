@@ -21,9 +21,7 @@ like_off_selector = "a.u_likeit_list_button._button.off"
 
 
 def wait_page_ready(driver_, timeout=10):
-    WebDriverWait(driver_, timeout).until(
-        lambda d: d.execute_script("return document.readyState") == "complete"
-    )
+    WebDriverWait(driver_, timeout).until(lambda d: d.execute_script("return document.readyState") == "complete")
 
 
 def parse_post(post_):
@@ -32,33 +30,25 @@ def parse_post(post_):
         title = post_.find_element(By.CSS_SELECTOR, title_selector).text.strip()
         link = post_.find_element(By.CSS_SELECTOR, link_selector).get_attribute("href")
         return {"nick_name": nick_name, "title": title, "link": link}
-    except NoSuchElementException as e:
-        logging.warning(f"Failed to parse post element. {e}")
+    except NoSuchElementException as exception:
+        logging.warning(f"Failed to parse post element. {exception}")
         return None
 
 
 def get_recommend_posts(driver_, selector=recommend_post_selector):
     try:
         posts_ = WebDriverWait(driver_, 10).until(ec.presence_of_all_elements_located((By.CSS_SELECTOR, selector)))
-        parsed = []
-        for p in posts_:
-            item = parse_post(p)
-            if item:
-                parsed.append(item)
-        return parsed
-    except TimeoutException as e:
-        logging.warning(f"Timeout while trying to find elements: {e}")
+        return [item for p in posts_ if (item := parse_post(p))]
+    except TimeoutException as exception:
+        logging.warning(f"Timeout while trying to find elements: {exception}")
         return []
 
 
 def handle_like_limit_popup(driver_, timeout=2) -> bool:
     try:
         alert = WebDriverWait(driver_, timeout).until(ec.alert_is_present())
-        text = alert.text or ""
-        if "더 이상 좋아요" in text or "해당 컨텐츠" in text:
-            alert.accept()
-            return True
-        return False
+        return ("더 이상 좋아요" in (alert.text or "") or "해당 컨텐츠" in (alert.text or "")) \
+            and not alert.accept()
     except TimeoutException:
         return False
 
@@ -98,7 +88,7 @@ if __name__ == "__main__":
     try:
         driver.get(configuration.naver_blog_mobile_recommendation_url)
         wait_page_ready(driver, 10)
-        window_scroll(driver, 10, 0, 500, 0, 1, configuration.naver_blog_mobile_recommendation_url)
+        window_scroll(driver, 100, 0, 500, 0, 1, configuration.naver_blog_mobile_recommendation_url)
         time.sleep(random.uniform(0.6, 1.2))
         posts = get_recommend_posts(driver)
         post_count = len(posts)
